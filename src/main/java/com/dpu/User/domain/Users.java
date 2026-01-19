@@ -1,22 +1,40 @@
 package com.dpu.User.domain;
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
 
 
 @Entity
-public class Userdomain {
+@Table(name = "users")
+public class Users {
+     //권한
 
-
-    @id
+    @Id  //기본 키
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "email")
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false)
+    private Role role;
 
 
 
-    //가져오기, 보내기 --->get,set
+
+
+
+
+
+
+    //가져오기, 보내기 --->getter,setter
+
     public Long getId(){
         return id;
     }

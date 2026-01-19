@@ -1,11 +1,23 @@
 package com.dpu.Product.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Product {
 
     //product_id,name,price,재고량, 솔드아웃, dateTime
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
     private Long id;
+
     private String name;
+
     private int price;
+
     private int Sold_out ;
     // 생성날짜는 어떻게 불러오는가?
 
