@@ -19,6 +19,7 @@ public class store {
 
     //매장 위치
 
+
     //매장에서 서비스 가입 날짜.
 
     public Long getId() {

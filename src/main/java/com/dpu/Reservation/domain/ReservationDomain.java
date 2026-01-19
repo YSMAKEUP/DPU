@@ -1,10 +1,10 @@
 package com.dpu.Reservation.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.dpu.User.domain.Role;
+import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class ReservationDomain {
@@ -13,9 +13,18 @@ public class ReservationDomain {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
     private Long id;
 
-    private DateTimeFormat pickTime;
+    @DateTimeFormat
+    @Column(name = "pickup_time")
+    private LocalDateTime pickTime;
 
-    private boolean status;
 
-    private DateTimeFormat created_at;
+    //주문 상태 ---> 픽업 준비
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false)
+    private reservation_status status;
+
+
+    @DateTimeFormat
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
 }
