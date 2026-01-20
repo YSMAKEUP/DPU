@@ -1,11 +1,11 @@
 package com.dpu.Product.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "products")
 public class Product {
 
     //product_id,name,price,재고량, 솔드아웃, dateTime
@@ -14,14 +14,28 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private int price;
 
-    private int Sold_out ;
-    // 생성날짜는 어떻게 불러오는가?
+    @Column(name = "is_sold_out", nullable = false)
+    private boolean soldOut ;
 
-    //
+
+    @Column(name = "created_at",nullable = false,updatable = false)
+    private LocalDateTime createdAt;
+
+
+    @PrePersist
+    public  void prePersist(){
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
+
+    //getters/setters
     public Long getId(){
         return id;
 
@@ -29,7 +43,6 @@ public class Product {
     public void setId(Long id){
         this.id = id;
     }
-
     //이름
     public String getName(){
         return name;
@@ -47,12 +60,16 @@ public class Product {
     }
 
 
-    //선택권이 있을 때 어떻게 만드는지 설정하기
-    public int getSold_out(){
-        return Sold_out;
+    public boolean isSoldOut(){
+        return soldOut;
     }
 
-    public void setSold_out(int Sold_out){
-        this.Sold_out =Sold_out;
+    public void setSoldOut(boolean soldOut){
+        this.soldOut= soldOut;
     }
+
+    public LocalDateTime getCreatedAt(){
+        return  createdAt;
+    }
+
 }

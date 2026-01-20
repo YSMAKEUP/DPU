@@ -1,6 +1,6 @@
 package com.dpu.Reservation.domain;
 
-public enum reservation_status {
+public enum ReservationStatus {
 
     received,
     preparing,

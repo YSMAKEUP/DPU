@@ -1,12 +1,10 @@
 package com.dpu.Store.domain;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "stores")
 public class store {
 
     //매장 아이디
@@ -15,9 +13,15 @@ public class store {
     private Long id;
 
     //매장 이름
+    @Column(name = "store_name",nullable = false)
     private String name;
 
     //매장 위치
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
 
 
     //매장에서 서비스 가입 날짜.

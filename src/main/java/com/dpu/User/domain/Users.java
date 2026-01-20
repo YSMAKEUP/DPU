@@ -9,35 +9,26 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 public class Users {
-     //권한
+
 
     @Id  //기본 키
     @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
     private Long id;
 
-    @Column(name = "name")
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "email")
+    @Column(nullable = false)
     private String email;
 
+
+    @Column(nullable = false)
     private String password;
-
-
 
 
     @Enumerated(EnumType.STRING)
     @Column(nullable=false)
     private Role role;
-
-
-
-
-
-
-
-
-
 
 
     //가져오기, 보내기 --->getter,setter
@@ -66,4 +57,19 @@ public class Users {
         this.email = email;
     }
 
+    public String getPassword(){
+        return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password ;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role){
+        this.role = role;
+    }
 }
