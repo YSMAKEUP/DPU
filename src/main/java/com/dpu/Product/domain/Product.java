@@ -12,6 +12,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
+    @Column(name = "product_id")
     private Long id;
 
     @Column(nullable = false)
@@ -43,7 +44,7 @@ public class Product {
     public void setId(Long id){
         this.id = id;
     }
-    //이름
+    //이름 get/set
     public String getName(){
         return name;
     }
@@ -51,6 +52,7 @@ public class Product {
         this.name = name;
     }
 
+    //가격 get/set
     public int getPrice() {
         return price;
     }
@@ -59,7 +61,7 @@ public class Product {
         this.price =price;
     }
 
-
+    //Sold-out getter/setter
     public boolean isSoldOut(){
         return soldOut;
     }
@@ -68,6 +70,8 @@ public class Product {
         this.soldOut= soldOut;
     }
 
+
+    //생성 시간 getter/setter
     public LocalDateTime getCreatedAt(){
         return  createdAt;
     }
