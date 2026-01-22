@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class User {
 
 
     @Id  //기본 키

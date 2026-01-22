@@ -21,6 +21,10 @@ public class Product {
     @Column(nullable = false)
     private int price;
 
+    @Column(nullable = false)
+    private int quantity;
+
+
     @Column(name = "is_sold_out", nullable = false)
     private boolean soldOut ;
 
