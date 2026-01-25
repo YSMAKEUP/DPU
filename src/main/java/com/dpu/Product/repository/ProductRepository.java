@@ -2,10 +2,12 @@ package com.dpu.Product.repository;
 
 import com.dpu.Product.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface ProductRepository extends JpaRepository <Product,Long> {
     //디저트가 재고가 있는지 조회, 특정 디저트 재고 조회,디저트 상태 (품절), 메뉴 목록
     // 가게의 재고가 있는지 조회

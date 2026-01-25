@@ -2,10 +2,12 @@ package com.dpu.Store.repository;
 
 import com.dpu.Store.domain.store;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface StoreRepository extends JpaRepository<store,Long> {
 
         // 1) 사장(OWNER)의 내 가게 목록
