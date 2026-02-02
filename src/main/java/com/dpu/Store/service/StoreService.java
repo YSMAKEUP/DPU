@@ -34,7 +34,7 @@ public class StoreService {
    }
    //가게 등록(회원 등록) --> 먼저 검증 -->없다면 추가.
    //1. 회원 등록 2. 수정 3. 삭제
-   public Long createStore(String name, String address, double longitude, double latitude, long kakaoPlaceId, Integer openTime, Integer closeTime , Integer closed_time , Integer closedDay) {
+   public Long createStore(String name, String address, double longitude, double latitude, long kakaoPlaceId, LocalTime openTime, LocalTime closeTime , LocalTime closed_time , Integer closedDay) {
        if (storeRepository.existsByName(name)) {
            throw new IllegalArgumentException("이미 존재하는 가게 이름입니다.");
        }
@@ -47,7 +47,7 @@ public class StoreService {
        store.setKakaoPlaceId(kakaoPlaceId);
        store.setOpenTime(openTime);
        store.setCloseTime(closeTime);
-       store.setClosedDay(closed_time);
+       store.setClosedDay(closedDay);
        storeRepository.save(store);
        return store.getId();
 

@@ -27,7 +27,7 @@ public class Store {
     private Long kakaoPlaceId;
 
     @Column(name = "open_time", nullable = false)
-    private Integer openTime;
+    private LocalTime openTime;
 
     @Column(name = "close_time", nullable = false)
     private LocalTime closeTime;
@@ -90,19 +90,19 @@ public class Store {
         this.kakaoPlaceId = kakaoPlaceId;
     }
 
-    public Integer getOpenTime() {
+    public LocalTime getOpenTime() {
         return openTime;
     }
 
-    public void setOpenTime(Integer openTime) {
+    public void setOpenTime(LocalTime openTime) {
         this.openTime = openTime;
     }
 
-    public Integer getCloseTime() {
+    public LocalTime getCloseTime() {
         return closeTime;
     }
 
-    public void setCloseTime(Integer closeTime) {
+    public void setCloseTime(LocalTime  closeTime) {
         this.closeTime = closeTime;
     }
 
