@@ -43,7 +43,6 @@ public class Product {
     //getters/setters
     public Long getId(){
         return id;
-
     }
     public void setId(Long id){
         this.id = id;
@@ -65,6 +64,16 @@ public class Product {
         this.price =price;
     }
 
+
+    //재고
+    public int getQuantity(){
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     //Sold-out getter/setter
     public boolean isSoldOut(){
         return soldOut;
@@ -80,4 +89,7 @@ public class Product {
         return  createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

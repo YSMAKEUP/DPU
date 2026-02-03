@@ -11,7 +11,7 @@ public enum ReservationStatus {
 
 }
 
-//}RECEIVED : 픽업 주문 접수
+//RECEIVED : 픽업 주문 접수
 //
 //PREPARING : 접수 중(준비 중)
 //

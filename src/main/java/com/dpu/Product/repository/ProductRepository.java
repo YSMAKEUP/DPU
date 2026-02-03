@@ -12,6 +12,9 @@ public interface ProductRepository extends JpaRepository <Product,Long> {
     //디저트가 재고가 있는지 조회, 특정 디저트 재고 조회,디저트 상태 (품절), 메뉴 목록
     // 가게의 재고가 있는지 조회
     // 메뉴 목록 (매장별)
+
+    Long findById(Long id);
+    
     List<Product> findByStoreId(Long storeId);
 
     // 판매중 메뉴 목록 (품절 제외)
