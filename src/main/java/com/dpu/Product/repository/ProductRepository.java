@@ -13,7 +13,7 @@ public interface ProductRepository extends JpaRepository <Product,Long> {
     // 가게의 재고가 있는지 조회
     // 메뉴 목록 (매장별)
 
-    Long findById(Long id);
+//    Long findById(Long id);
     
     List<Product> findByStoreId(Long storeId);
 
@@ -25,7 +25,4 @@ public interface ProductRepository extends JpaRepository <Product,Long> {
 
     // 특정 매장의 특정 디저트 조회 (소속 검증/상세 조회)
     Optional<Product> findByIdAndStoreId(Long id, Long storeId);
-
-
-
 }

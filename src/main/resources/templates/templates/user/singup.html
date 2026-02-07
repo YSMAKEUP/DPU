@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - Sweet Pickup</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .signup-container {
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .signup-title {
+            text-align: center;
+            font-size: 28px;
+            color: #3d2e27;
+            margin-bottom: 10px;
+        }
+
+        .signup-subtitle {
+            text-align: center;
+            color: #8b7d74;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5a4a42;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #8b5a3c;
+        }
+
+        .role-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .role-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .role-option input[type="radio"] {
+            display: none;
+        }
+
+        .role-label {
+            display: block;
+            padding: 15px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .role-option input[type="radio"]:checked + .role-label {
+            border-color: #8b5a3c;
+            background: #faf8f5;
+            color: #8b5a3c;
+            font-weight: 600;
+        }
+
+        .role-label:hover {
+            border-color: #8b5a3c;
+        }
+
+        .role-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 14px;
+            background: #8b5a3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-signup:hover {
+            background: #6d4a31;
+            transform: translateY(-2px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6d5d53;
+        }
+
+        .login-link a {
+            color: #8b5a3c;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-hint {
+            font-size: 12px;
+            color: #8b7d74;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="signup-container">
+    <h1 class="signup-title">회원가입</h1>
+    <p class="signup-subtitle">Sweet Pickup과 함께 시작하세요</p>
+
+    <!-- 회원가입 폼 -->
+    <form th:action="@{/users/signup}" method="post">
+        <!-- 이름 -->
+        <div class="form-group">
+            <label class="form-label" for="name">이름</label>
+            <input type="text" id="name" name="name" class="form-input"
+                   placeholder="홍길동" required>
+        </div>
+
+        <!-- 이메일 -->
+        <div class="form-group">
+            <label class="form-label" for="email">이메일</label>
+            <input type="email" id="email" name="email" class="form-input"
+                   placeholder="example@email.com" required>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="form-group">
+            <label class="form-label" for="password">비밀번호</label>
+            <input type="password" id="password" name="password" class="form-input"
+                   placeholder="비밀번호를 입력하세요" required minlength="6">
+            <p class="password-hint">* 6자 이상 입력해주세요</p>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div class="form-group">
+            <label class="form-label" for="passwordConfirm">비밀번호 확인</label>
+            <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-input"
+                   placeholder="비밀번호를 다시 입력하세요" required minlength="6">
+        </div>
+
+        <!-- 역할 선택 -->
+        <div class="form-group">
+            <label class="form-label">가입 유형</label>
+            <div class="role-group">
+                <div class="role-option">
+                    <input type="radio" id="user" name="role" value="USER" checked>
+                    <label for="user" class="role-label">
+                        <div class="role-icon">🍰</div>
+                        <div>일반 회원</div>
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" id="owner" name="role" value="OWNER">
+                    <label for="owner" class="role-label">
+                        <div class="role-icon">🏪</div>
+                        <div>사장님</div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-signup">가입하기</button>
+    </form>
+
+    <!-- 로그인 링크 -->
+    <div class="login-link">
+        이미 계정이 있으신가요? <a th:href="@{/users/login}">로그인</a>
+    </div>
+</div>
+
+<script>
+    // 비밀번호 확인 검증
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const passwordConfirm = document.getElementById('passwordConfirm').value;
+
+        if (password !== passwordConfirm) {
+            e.preventDefault();
+            alert('비밀번호가 일치하지 않습니다.');
+        }
+    });
+</script>
+</body>
+</html>

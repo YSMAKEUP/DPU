@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Pickup - 달콤한 순간을 더 특별하게</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+        }
+
+        .intro-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #faf8f5 0%, #f5f0eb 50%, #e8dfd5 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 배경 장식 */
+        .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .circle-1 {
+            width: 600px;
+            height: 600px;
+            background: #8b5a3c;
+            top: -200px;
+            right: -200px;
+        }
+
+        .circle-2 {
+            width: 400px;
+            height: 400px;
+            background: #d4a574;
+            bottom: -150px;
+            left: -150px;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: #8b5a3c;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+        }
+
+        /* 메인 콘텐츠 */
+        .intro-content {
+            text-align: center;
+            z-index: 10;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .brand-name {
+            font-size: 56px;
+            font-weight: 700;
+            color: #3d2e27;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            font-size: 24px;
+            color: #6d5d53;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #8b5a3c;
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 90, 60, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #6d4a31;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 90, 60, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #8b5a3c;
+            border: 2px solid #8b5a3c;
+        }
+
+        .btn-secondary:hover {
+            background: #8b5a3c;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* 특징 섹션 */
+        .features {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 60px;
+            z-index: 10;
+        }
+
+        .feature {
+            text-align: center;
+            color: #5a4a42;
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .brand-name {
+                font-size: 40px;
+            }
+
+            .tagline {
+                font-size: 18px;
+                padding: 0 20px;
+            }
+
+            .cta-buttons {
+                padding: 0 20px;
+            }
+
+            .btn {
+                padding: 14px 30px;
+                font-size: 16px;
+            }
+
+            .features {
+                gap: 30px;
+                flex-wrap: wrap;
+            }
+
+            .circle-1, .circle-2, .circle-3 {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="intro-container">
+    <!-- 배경 장식 -->
+    <div class="bg-decoration circle-1"></div>
+    <div class="bg-decoration circle-2"></div>
+    <div class="bg-decoration circle-3"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="intro-content">
+        <div class="logo">🍰</div>
+        <h1 class="brand-name">Sweet Pickup</h1>
+        <p class="tagline">달콤한 순간을 더 특별하게</p>
+
+        <div class="cta-buttons">
+            <a th:href="@{/}" class="btn btn-primary">디저트 둘러보기</a>
+            <a th:href="@{/users/signup}" class="btn btn-secondary">회원가입</a>
+        </div>
+    </div>
+
+    <!-- 특징 -->
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon">🎂</div>
+            <div class="feature-text">매일 신선하게</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">⏰</div>
+            <div class="feature-text">편리한 예약</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">✨</div>
+            <div class="feature-text">다양한 선택</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
