@@ -1,4 +1,6 @@
 package com.dpu.Reservation.domain;
+import com.dpu.Product.domain.Product;
+import com.dpu.User.domain.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -10,6 +12,14 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
     @Column(name = "reservation_id")
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id",nullable = false)
+    private Product product;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id",nullable = false)
+    private User user;
 
     @Column(name = "pickup_time",nullable = false)
     private LocalDateTime pickupTime;
@@ -36,6 +46,22 @@ public class Reservation {
         this.id = id;
     }
 
+    public User getUser(){
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Product getProduct(){
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public LocalDateTime getPickupTime() {
         return pickupTime;
     }
@@ -56,4 +82,7 @@ public class Reservation {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

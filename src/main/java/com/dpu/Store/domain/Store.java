@@ -1,5 +1,6 @@
 package com.dpu.Store.domain;
 
+import com.dpu.User.domain.User;
 import jakarta.persistence.*;
 import java.time.LocalTime;
 
@@ -16,6 +17,13 @@ public class Store {
 
     @Column(nullable = false)
     private String address;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id",nullable = false)
+    private User user;
+
+
 
     @Column(nullable = false)
     private double latitude;
@@ -65,6 +73,15 @@ public class Store {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public User getOwner(){
+        return user;
+    }
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
 
     public double getLatitude() {
         return latitude;

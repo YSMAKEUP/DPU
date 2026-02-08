@@ -1,5 +1,6 @@
 package com.dpu.Product.domain;
 
+import com.dpu.Store.domain.Store;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,17 @@ public class Product {
     @Column(name = "created_at",nullable = false,updatable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id",nullable = false)
+    private Store store;
+
+    public Store getStore(){
+        return store;
+    }
+
+    public void setStore(Store store){
+        this.store = store ;
+    }
 
     @PrePersist
     public  void prePersist(){
