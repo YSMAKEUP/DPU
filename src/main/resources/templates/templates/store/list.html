@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>가게 목록 - Sweet Pickup</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #f5e6d3 0%, #e8d5c4 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 배경 원형 장식 */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      z-index: 0;
+    }
+
+    body::before {
+      width: 600px;
+      height: 600px;
+      top: -200px;
+      right: -200px;
+    }
+
+    body::after {
+      width: 500px;
+      height: 500px;
+      bottom: -150px;
+      left: -150px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 헤더 */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2d2d2d;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      font-size: 15px;
+      color: #9e9e9e;
+      font-weight: 300;
+    }
+
+    /* 검색 컨테이너 */
+    .search-container {
+      background: rgba(245, 243, 240, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      margin-bottom: 25px;
+    }
+
+    .search-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d2d2d;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 12px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid #e0dcd8;
+      border-radius: 50px;
+      font-size: 15px;
+      background: white;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #8b5a3c;
+      box-shadow: 0 0 0 4px rgba(139, 90, 60, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: #c4bdb8;
+    }
+
+    .search-btn {
+      padding: 14px 32px;
+      background: #8b5a3c;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(139, 90, 60, 0.2);
+      white-space: nowrap;
+    }
+
+    .search-btn:hover {
+      background: #6d4a31;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 90, 60, 0.3);
+    }
+
+    /* 메인 컨텐츠 영역 - 좌우 분할 */
+    .content-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      height: calc(100vh - 400px);
+      min-height: 600px;
+    }
+
+    /* 지도 영역 (왼쪽) */
+    .map-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+      max-height: calc(100vh - 400px);
+    }
+
+    #map {
+      width: 100%;
+      height: 600px;
+    }
+
+    /* 리스트 영역 (오른쪽) */
+    .list-section {
+      overflow-y: auto;
+      max-height: calc(100vh - 400px);
+      padding-right: 10px;
+    }
+
+    /* 스크롤바 커스텀 */
+    .list-section::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .list-section::-webkit-scrollbar-track {
+      background: rgba(224, 220, 216, 0.3);
+      border-radius: 10px;
+    }
+
+    .list-section::-webkit-scrollbar-thumb {
+      background: #8b5a3c;
+      border-radius: 10px;
+    }
+
+    .list-section::-webkit-scrollbar-thumb:hover {
+      background: #6d4a31;
+    }
+
+    /* 결과 헤더 */
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 0 5px;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d2d2d;
+    }
+
+    .result-count {
+      font-size: 15px;
+      color: #8b5a3c;
+      font-weight: 600;
+    }
+
+    /* 가게 카드 */
+    .store-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .store-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      border-color: #8b5a3c;
+    }
+
+    .store-card.active {
+      border-color: #8b5a3c;
+      background: linear-gradient(135deg, #fff9f5 0%, #faf6f0 100%);
+    }
+
+    .store-card-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .store-info-section {
+      flex: 1;
+    }
+
+    .store-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2d2d2d;
+      margin-bottom: 12px;
+    }
+
+    .store-info {
+      display: flex;
+      align-items: center;
+      color: #6d5d53;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .store-info i {
+      width: 18px;
+      color: #8b5a3c;
+      margin-right: 8px;
+      font-size: 12px;
+    }
+
+    .status-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-open {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      color: #155724;
+      box-shadow: 0 2px 8px rgba(21, 87, 36, 0.15);
+    }
+
+    .status-closed {
+      background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+      color: #721c24;
+      box-shadow: 0 2px 8px rgba(114, 28, 36, 0.15);
+    }
+
+    /* 빈 결과 */
+    .empty-result {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      background: rgba(245, 243, 240, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      color: #c4bdb8;
+      margin-bottom: 20px;
+    }
+
+    .empty-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #5a4a42;
+      margin-bottom: 10px;
+    }
+
+    .empty-text {
+      font-size: 16px;
+      color: #8b7d74;
+    }
+
+    /* 모바일 반응형 */
+    @media (max-width: 1024px) {
+      .content-wrapper {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .map-section {
+        position: relative;
+        top: 0;
+        max-height: 400px;
+        order: 1;
+      }
+
+      #map {
+        height: 400px;
+      }
+
+      .list-section {
+        order: 2;
+        max-height: none;
+        overflow-y: visible;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 15px;
+      }
+
+      .page-title {
+        font-size: 28px;
+      }
+
+      .logo {
+        font-size: 40px;
+      }
+
+      .search-container {
+        padding: 25px 20px;
+      }
+
+      .search-form {
+        flex-direction: column;
+      }
+
+      .search-btn {
+        width: 100%;
+      }
+
+      .store-card {
+        padding: 18px;
+      }
+
+      .store-card-content {
+        flex-direction: column;
+      }
+
+      .status-section {
+        align-items: flex-start;
+      }
+
+      .store-name {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="logo">🍰</div>
+    <h1 class="page-title">Sweet Pickup</h1>
+    <p class="page-subtitle">달콤한 순간을 더 특별하게</p>
+  </div>
+
+  <!-- 검색 -->
+  <div class="search-container">
+    <h2 class="search-title"><i class="fas fa-store"></i> 가게 검색</h2>
+    <form th:action="@{/stores}" method="get" class="search-form">
+      <input type="text" name="name" class="search-input"
+             placeholder="가게 이름을 입력하세요" th:value="${param.name}">
+      <button type="submit" class="search-btn">
+        <i class="fas fa-search"></i> 검색
+      </button>
+    </form>
+  </div>
+
+  <!-- 메인 컨텐츠 -->
+  <div th:if="${stores != null and !stores.isEmpty()}" class="content-wrapper">
+    <!-- 왼쪽: 지도 -->
+    <div class="map-section">
+      <div id="map"></div>
+    </div>
+
+    <!-- 오른쪽: 리스트 -->
+    <div class="list-section">
+      <div class="result-header">
+        <h3 class="result-title">검색 결과</h3>
+        <span class="result-count">
+          <i class="fas fa-store"></i> <span th:text="${stores.size()}"></span>개
+        </span>
+      </div>
+
+      <div class="store-card" th:each="store, iterStat : ${stores}"
+           th:onclick="|location.href='@{/stores/{id}(id=${store.id})}'|"
+           th:data-lat="${store.latitude}"
+           th:data-lng="${store.longitude}"
+           th:data-name="${store.name}"
+           th:data-address="${store.address}"
+           th:data-index="${iterStat.index}"
+           onmouseenter="highlightMarker(this)"
+           onmouseleave="unhighlightMarker(this)">
+        <div class="store-card-content">
+          <div class="store-info-section">
+            <div class="store-name" th:text="${store.name}">가게 이름</div>
+
+            <div class="store-info">
+              <i class="fas fa-map-marker-alt"></i>
+              <span th:text="${store.address}">주소</span>
+            </div>
+
+            <div class="store-info">
+              <i class="fas fa-clock"></i>
+              <span th:text="${store.openTime} + ' ~ ' + ${store.closeTime}">영업시간</span>
+            </div>
+
+            <div class="store-info" th:if="${store.closedDay != null}">
+              <i class="fas fa-calendar-times"></i>
+              정기휴무:
+              <span th:switch="${store.closedDay}">
+                <span th:case="1">월요일</span>
+                <span th:case="2">화요일</span>
+                <span th:case="3">수요일</span>
+                <span th:case="4">목요일</span>
+                <span th:case="5">금요일</span>
+                <span th:case="6">토요일</span>
+                <span th:case="7">일요일</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="status-section">
+            <span th:if="${store.isOpen}" class="status-badge status-open">
+              <i class="fas fa-check-circle"></i> 영업중
+            </span>
+            <span th:unless="${store.isOpen}" class="status-badge status-closed">
+              <i class="fas fa-times-circle"></i> 휴무
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 빈 결과 -->
+  <div th:if="${stores == null or stores.isEmpty()}" class="content-wrapper">
+    <div class="empty-result">
+      <div class="empty-icon">
+        <i class="fas fa-search"></i>
+      </div>
+      <h4 class="empty-title">검색 결과가 없습니다</h4>
+      <p class="empty-text">다른 키워드로 검색해보세요</p>
+    </div>
+  </div>
+</div>
+
+<!-- 카카오맵 API -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_APP_KEY"></script>
+<script>
+  let map;
+  let markers = [];
+  let infowindows = [];
+
+  // 페이지 로드 시 지도 초기화
+  window.addEventListener('DOMContentLoaded', function() {
+    initMap();
+  });
+
+  function initMap() {
+    const mapContainer = document.getElementById('map');
+    const stores = [];
+
+    // 가게 데이터 수집
+    document.querySelectorAll('.store-card').forEach(card => {
+      const lat = parseFloat(card.dataset.lat);
+      const lng = parseFloat(card.dataset.lng);
+      const name = card.dataset.name;
+      const address = card.dataset.address;
+      const index = parseInt(card.dataset.index);
+
+      if (lat && lng) {
+        stores.push({ lat, lng, name, address, index });
+      }
+    });
+
+    if (stores.length === 0) return;
+
+    // 지도 중심 계산
+    const centerLat = stores[0].lat;
+    const centerLng = stores[0].lng;
+
+    const mapOption = {
+      center: new kakao.maps.LatLng(centerLat, centerLng),
+      level: 5
+    };
+
+    map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 마커 추가
+    stores.forEach((store, idx) => {
+      const markerPosition = new kakao.maps.LatLng(store.lat, store.lng);
+
+      const marker = new kakao.maps.Marker({
+        position: markerPosition,
+        map: map
+      });
+
+      markers.push(marker);
+
+      // 인포윈도우
+      const infowindow = new kakao.maps.InfoWindow({
+        content: `
+          <div style="padding:12px 18px; min-width:180px;">
+            <div style="font-weight:bold; margin-bottom:6px; color:#8b5a3c; font-size:14px;">🍰 ${store.name}</div>
+            <div style="font-size:12px; color:#666; line-height:1.4;">${store.address}</div>
+          </div>
+        `,
+        removable: false
+      });
+
+      infowindows.push(infowindow);
+
+      // 마커 클릭 이벤트
+      kakao.maps.event.addListener(marker, 'click', function() {
+        // 모든 인포윈도우 닫기
+        infowindows.forEach(iw => iw.close());
+        // 클릭한 인포윈도우만 열기
+        infowindow.open(map, marker);
+
+        // 해당 카드 하이라이트
+        document.querySelectorAll('.store-card').forEach(card => {
+          card.classList.remove('active');
+        });
+        const targetCard = document.querySelector(`[data-index="${store.index}"]`);
+        if (targetCard) {
+          targetCard.classList.add('active');
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+
+    // 지도 범위 재설정
+    if (stores.length > 1) {
+      const bounds = new kakao.maps.LatLngBounds();
+      stores.forEach(store => {
+        bounds.extend(new kakao.maps.LatLng(store.lat, store.lng));
+      });
+      map.setBounds(bounds);
+    }
+  }
+
+  // 카드 호버 시 마커 강조
+  function highlightMarker(card) {
+    const index = parseInt(card.dataset.index);
+    if (markers[index] && infowindows[index]) {
+      // 모든 인포윈도우 닫기
+      infowindows.forEach(iw => iw.close());
+      // 호버한 마커의 인포윈도우 열기
+      infowindows[index].open(map, markers[index]);
+    }
+  }
+
+  function unhighlightMarker(card) {
+    // 인포윈도우는 유지 (닫지 않음)
+  }
+</script>
+</body>
+</html>

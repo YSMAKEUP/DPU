@@ -1,15 +1,17 @@
 package com.dpu.Product.service;
 import com.dpu.Store.domain.Store;
 import com.dpu.Store.repository.StoreRepository;
-import com.dpu.User.domain.Role;
 import com.dpu.Product.domain.Product;
 import com.dpu.Product.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@Transactional
 public class ProductService {
     private  final ProductRepository productRepository;
     private  final StoreRepository StoreRepository;
@@ -20,7 +22,7 @@ public class ProductService {
     }
     //1. 상품 목록 조회(가게별, 특정 메뉴별), 상품 상세 조회
     public List<Product> findStore(Long storeId){
-        return productRepository.findByStoreId(storeId);
+        return productRepository.findByStore_Id(storeId);
     }
 
     //1-2 특정 메뉴별
@@ -32,7 +34,7 @@ public class ProductService {
 
     //2. 상품 관리( 1.등록 2.수정 3. 삭제)
     //2-1 등록 일 단 상품이 살아있는지 없는지에 대해서 조회를 해야한다.
-
+    @Transactional
     public Long creatProduct(Long id, String name, int price ,int quantity ,boolean soldOut, LocalDateTime createdAt){
         if (productRepository.existsById(id))
             throw new IllegalArgumentException("이미 등록이 완료된 메뉴입니다.");

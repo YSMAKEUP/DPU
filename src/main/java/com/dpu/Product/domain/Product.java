@@ -22,7 +22,7 @@ public class Product {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
+    @Column(name = "stock_qty", nullable = false)
     private int quantity;
 
 
@@ -104,4 +104,6 @@ public class Product {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+
 }

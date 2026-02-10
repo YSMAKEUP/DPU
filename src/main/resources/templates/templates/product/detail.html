@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 상세</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa;
+      min-height: 100vh;
+      padding: 40px 0;
+    }
+    .product-container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .product-header {
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .product-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .product-price {
+      font-size: 2.5rem;
+      color: #667eea;
+      font-weight: bold;
+    }
+    .info-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+    .info-label {
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    .info-value {
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .stock-status {
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .stock-available {
+      background: #d4edda;
+      color: #155724;
+    }
+    .stock-low {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .stock-out {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .store-info {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+    .btn-action {
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-weight: 600;
+      margin: 5px;
+    }
+    .reservation-form {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 15px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="product-container">
+    <!-- 뒤로가기 버튼 -->
+    <a th:href="@{/stores/{id}(id=${product.store.id})}" class="btn btn-outline-secondary mb-3">
+      <i class="fas fa-arrow-left"></i> 가게로 돌아가기
+    </a>
+
+    <!-- 상품 헤더 -->
+    <div class="product-header">
+      <div class="row">
+        <div class="col-md-8">
+          <h1 class="product-title" th:text="${product.name}">상품명</h1>
+          <div class="text-muted">
+            <small>상품 ID: <span th:text="${product.id}"></span></small><br>
+            <small>등록일: <span th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}"></span></small>
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <div class="product-price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">가격</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 가게 정보 -->
+    <div class="store-info">
+      <h5><i class="fas fa-store"></i> 판매 가게</h5>
+      <h4 th:text="${product.store.name}">가게명</h4>
+      <p class="mb-0">
+        <i class="fas fa-map-marker-alt"></i>
+        <span th:text="${product.store.address}">주소</span>
+      </p>
+    </div>
+
+    <!-- 재고 상태 -->
+    <div th:if="${product.soldOut or product.quantity == 0}" class="stock-status stock-out">
+      <i class="fas fa-times-circle fa-2x mb-2"></i>
+      <h5>품절</h5>
+      <p class="mb-0">현재 구매할 수 없습니다</p>
+    </div>
+    <div th:if="${!product.soldOut and product.quantity > 0 and product.quantity <= 10}"
+         class="stock-status stock-low">
+      <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+      <h5>품절 임박</h5>
+      <p class="mb-0">남은 수량: <strong th:text="${product.quantity}"></strong>개</p>
+    </div>
+    <div th:if="${!product.soldOut and product.quantity > 10}"
+         class="stock-status stock-available">
+      <i class="fas fa-check-circle fa-2x mb-2"></i>
+      <h5>재고 충분</h5>
+      <p class="mb-0">남은 수량: <strong th:text="${product.quantity}"></strong>개</p>
+    </div>
+
+    <!-- 상품 정보 -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="info-section">
+          <div class="info-label">상품명</div>
+          <div class="info-value" th:text="${product.name}">상품명</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-section">
+          <div class="info-label">가격</div>
+          <div class="info-value" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">가격</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-section">
+          <div class="info-label">현재 재고</div>
+          <div class="info-value" th:text="${product.quantity} + '개'">재고</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-section">
+          <div class="info-label">판매 상태</div>
+          <div class="info-value">
+            <span th:if="${product.soldOut}" class="text-danger">품절</span>
+            <span th:unless="${product.soldOut}" class="text-success">판매중</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 예약 폼 (고객용) -->
+    <div th:if="${!isOwner and !product.soldOut and product.quantity > 0 and isPickupAvailable}"
+         class="reservation-form">
+      <h5 class="mb-3"><i class="fas fa-shopping-cart"></i> 예약 주문하기</h5>
+      <form th:action="@{/reservations}" method="post">
+        <input type="hidden" name="productId" th:value="${product.id}">
+
+        <div class="mb-3">
+          <label for="quantity" class="form-label">수량</label>
+          <input type="number" class="form-control" id="quantity" name="quantity"
+                 min="1" th:max="${product.quantity}" value="1" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="pickupTime" class="form-label">픽업 시간</label>
+          <input type="datetime-local" class="form-control" id="pickupTime"
+                 name="pickupTime" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-action w-100">
+          <i class="fas fa-check"></i> 예약하기
+        </button>
+      </form>
+    </div>
+
+    <!-- 관리 버튼 (사장님용) -->
+    <div th:if="${isOwner}" class="text-center mt-4">
+      <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-primary btn-action">
+        <i class="fas fa-edit"></i> 수정
+      </a>
+      <a th:href="@{/stores/{id}(id=${product.store.id})}" class="btn btn-secondary btn-action">
+        <i class="fas fa-list"></i> 목록
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 픽업 시간 최소값 설정 (현재 시간 + 30분)
+  const now = new Date();
+  now.setMinutes(now.getMinutes() + 30);
+  const minTime = now.toISOString().slice(0, 16);
+  document.getElementById('pickupTime').min = minTime;
+</script>
+</body>
+</html>

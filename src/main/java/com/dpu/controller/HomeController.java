@@ -24,7 +24,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model, HttpSession session) {
         // 디저트 목록 (전체 또는 인기 상품)
-        model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("products", productService.find);
 
         // 로그인 여부 확인
         Long userId = (Long) session.getAttribute("userId");

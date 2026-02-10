@@ -14,14 +14,14 @@ public interface ProductRepository extends JpaRepository <Product,Long> {
     // 메뉴 목록 (매장별)
 
 //    Long findById(Long id);
-    
+
     List<Product> findByStoreId(Long storeId);
 
     // 판매중 메뉴 목록 (품절 제외)
     List<Product> findByStoreIdAndSoldOutFalse(Long storeId);
 
     // 재고 있는 메뉴 목록 (quantity > 0)
-    List<Product> findByStoreIdAndQuantityGreaterThan(Long storeId, Long quantity);
+    List<Product> findByStoreIdAndQuantityGreaterThan(Long storeId, int quantity);
 
     // 특정 매장의 특정 디저트 조회 (소속 검증/상세 조회)
     Optional<Product> findByIdAndStoreId(Long id, Long storeId);
