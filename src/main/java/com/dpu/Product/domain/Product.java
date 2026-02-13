@@ -106,4 +106,11 @@ public class Product {
     }
 
 
+    public String getProductName() {
+        return name;
+    }
+
+    public int getStockQuantity() {
+        return quantity;
+    }
 }

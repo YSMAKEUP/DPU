@@ -25,4 +25,6 @@ public interface ProductRepository extends JpaRepository <Product,Long> {
 
     // 특정 매장의 특정 디저트 조회 (소속 검증/상세 조회)
     Optional<Product> findByIdAndStoreId(Long id, Long storeId);
+
+    List<Product> findByStore_Id(Long storeId);
 }

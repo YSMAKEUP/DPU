@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ProductService {
-    private  final ProductRepository productRepository;
+    public final ProductRepository productRepository;
     private  final StoreRepository StoreRepository;
 
     public ProductService(ProductRepository productRepository, StoreRepository StoreRepository){

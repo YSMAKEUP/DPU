@@ -1,4 +1,4 @@
-package com.dpu.Store.dto;
+package com.dpu.Reservation.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -10,9 +10,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreRequestDto {
+public class OrderItemResponseDto {
 
-    private double latitude;
-    private double longitude;
+
+    private String productName;
+    private int quantity;
+    private int price;
+
 
 }
