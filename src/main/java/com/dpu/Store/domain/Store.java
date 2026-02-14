@@ -21,7 +21,7 @@ public class Store {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id",nullable = false)
-    private User user;
+    private User owner;
 
 
 
@@ -74,12 +74,12 @@ public class Store {
         this.address = address;
     }
 
-    public User getOwner(){
-        return user;
+    public User getUser(){
+        return owner;
     }
 
     public void setUser(User user){
-        this.user = user;
+        this.owner = user;
     }
 
 

@@ -59,7 +59,7 @@ public class StoreService {
     //1.특정 가게 조회
     public List<Store> getStore(String name){
 
-       return storeRepository.findByStoreNameContaining(name);
+       return storeRepository.findByNameContaining(name);
     }
 
 

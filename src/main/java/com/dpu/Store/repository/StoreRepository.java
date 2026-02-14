@@ -11,16 +11,16 @@ import java.util.Optional;
 public interface StoreRepository extends JpaRepository<Store,Long> {
 
         // 1) 사장(OWNER)의 내 가게 목록
-        List<Store> findByOwnerId(Long ownerId);
+        List<Store> findByOwner_Id(Long ownerId);
 
         // 2) 특정 사장의 특정 가게 조회 (권한 검증용)
         Optional<Store> findByIdAndOwnerId(Long storeId, Long ownerId);
 
         // 3) 가게 이름으로 검색 (부분 검색)
-        List<Store> findByStoreNameContaining(String keyword);
+        List<Store> findByNameContaining(String name);
 
         // 4) 가게 존재 여부(권한 검증 전에 가볍게 체크하고 싶을 때)
-        boolean existsByIdAndOwnerId(Long storeId, Long ownerId);
+        boolean existsByIdAndOwnerId(Long id, Long ownerId);
 
         // 5) 가게 이름 존재 여부 (등록/수정 시 중복 체크)
         boolean existsByName(String name);
