@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.lang.reflect.Array;
+import java.util.List;
 
 
 @Getter
@@ -15,6 +14,6 @@ import java.lang.reflect.Array;
 public class ProductResponseDto {
     private Long storeId;
     private String storeName;
-    private Array products [];
+    private List<ProductDto> products;
 
 }

@@ -6,29 +6,36 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 
 
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "users")
+@Getter @Setter  // Getter, Setter 자동 생성
+@NoArgsConstructor // 기본 생성자 자동 생성
 public class User {
 
-
-    @Id  //기본 키
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //자동으로 키를 증가시킨다.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true) // 이메일은 중복되면 안 되니까 unique 추가 추천!
     private String email;
-
 
     @Column(nullable = false)
     private String password;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Role role;
+
 
 
     //가져오기, 보내기 --->getter,setter

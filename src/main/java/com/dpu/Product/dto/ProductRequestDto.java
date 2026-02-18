@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ProductRequestDto {
 
-    private Long storeID;
+    private Long storeId;
 
 
 }
