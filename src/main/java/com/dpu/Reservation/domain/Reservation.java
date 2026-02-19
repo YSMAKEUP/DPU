@@ -23,6 +23,8 @@ public class Reservation {
     @JoinColumn(name = "owner_id", nullable = false)
     private User user;
 
+
+
     @Column(name = "pickup_time", nullable = false)
     private LocalDateTime pickupTime;
 
@@ -41,51 +43,44 @@ public class Reservation {
             this.createdAt = LocalDateTime.now();
         }
     }
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id){
+        this.id = id;
+    }
+
+    public User getUser(){
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
+    public LocalDateTime getPickupTime() {
+        return pickupTime;
+    }
+
+    public void setPickupTime(LocalDateTime pickupTime) {
+        this.pickupTime = pickupTime;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
-//    public Long getId() {
-//        return id;
-//    }
-//    public void setId(Long id){
-//        this.id = id;
-//    }
-//
-//    public User getUser(){
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
-////
-////    public Product getProduct(){
-////        return product;
-////    }
-////
-////    public void setProduct(Product product) {
-////        this.product = product;
-////    }
-//
-//    public LocalDateTime getPickupTime() {
-//        return pickupTime;
-//    }
-//
-//    public void setPickupTime(LocalDateTime pickupTime) {
-//        this.pickupTime = pickupTime;
-//    }
-//
-//    public ReservationStatus getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(ReservationStatus status) {
-//        this.status = status;
-//    }
-//
-//    public LocalDateTime getCreatedAt() {
-//        return createdAt;
-//    }
-//
-//    public void setCreatedAt(LocalDateTime createdAt) {
-//        this.createdAt = createdAt;
-//    }
-//}

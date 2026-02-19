@@ -43,7 +43,7 @@ public class ReservationService {
 
     //특정 상품 조회
     public List<Reservation> getProductId(Long productId) {
-        return reservationRepository.findByProduct_Id(productId);
+        return reservationRepository.findByProductId(productId);
     }
 
     //사용자 예약 상태

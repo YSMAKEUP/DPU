@@ -3,6 +3,7 @@ package com.dpu.Reservation.repository;
 import com.dpu.Reservation.domain.Reservation;
 import com.dpu.Reservation.domain.ReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +19,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByUser_Id(Long userId);
 
     // 특정 상품의 전체 예약 조회
-    List<Reservation> findByProduct_Id(Long productId);
+    @Query("""
+  select distinct r
+  from Reservation r
+  join r.orderItems oi
+  where oi.product.id = :productId
+""")
+    List<Reservation> findByProductId(Long productId);
 
     // 특정 사용자의 특정 상태 예약 조회 (예: 진행중인 예약만)
     List<Reservation> findByUser_IdAndStatus(Long userId, ReservationStatus status);
