@@ -1,3 +1,5 @@
+<!--가게 로그인-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
@@ -197,7 +199,7 @@
 
 
     <!-- 로그인 폼 -->
-    <form th:action="@{/users/login}" method="post">
+    <form th:action="@{/login}" method="post">
         <div class="form-group">
             <label class="form-label" for="email">이메일</label>
             <input type="email" id="email" name="email" class="form-input"
@@ -213,7 +215,7 @@
         <button type="submit" class="btn-login">로그인</button>
 
         <div class="signup-link">
-            계정이 없으신가요? <a th:href="@{/users/signup}">회원가입</a>
+            계정이 없으신가요? <a th:href="@{/signup}">회원가입</a>
         </div>
     </form>
 
@@ -245,9 +247,9 @@
         window.location.href = '/desserts';
     });
 
-    // 회원가입 버튼
+    // 로그인 버튼
     document.querySelector('.btn-secondary').addEventListener('click', function() {
-        window.location.href = '/users/signup';
+        window.location.href = '/signup';
     });
 </script>
 </body>
