@@ -2,6 +2,8 @@ package com.dpu.Store.repository;
 
 import com.dpu.Store.domain.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,6 +26,16 @@ public interface StoreRepository extends JpaRepository<Store,Long> {
 
         // 5) 가게 이름 존재 여부 (등록/수정 시 중복 체크)
         boolean existsByName(String name);
+
+        // 거리 기반 검색 (Haversine 공식 사용)
+        @Query(value = "SELECT * FROM stores WHERE " +
+                "(6371 * acos(cos(radians(:latitude)) * cos(radians(latitude)) * " +
+                "cos(radians(longitude) - radians(:longitude)) + " +
+                "sin(radians(:latitude)) * sin(radians(latitude)))) < :radius",
+                nativeQuery = true)
+        List<Store> findNearbyStores(@Param("latitude") double latitude,
+                                     @Param("longitude") double longitude,
+                                     @Param("radius") double radius);
 
 
 }

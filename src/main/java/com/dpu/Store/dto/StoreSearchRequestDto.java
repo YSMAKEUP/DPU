@@ -10,7 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreRequestDto {
+public class StoreSearchRequestDto {
+
+
 
     private double latitude;
     private double longitude;
