@@ -1,6 +1,7 @@
 package com.dpu.Store.service;
 
 import com.dpu.Product.domain.Product;
+import com.dpu.Product.dto.ProductDto;
 import com.dpu.Product.repository.ProductRepository;
 import com.dpu.Store.dto.StoreCreateRequestDto;
 import com.dpu.Store.dto.StoreResponseDto;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,6 +88,11 @@ public class StoreService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다."));
     }
 
+    //특정 가게 검증 (처음에 권한 조회,
+    public Store findByIdAndOwnerId(Long storeId, Long ownerId) {
+        return storeRepository.findByIdAndOwnerId(storeId, ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("권한이 없습니다."));
+    }
     // 주변 가게 조회
     public List<StoreResponseDto> getNearbyStores(double latitude, double longitude, double radius) {
         return storeRepository.findNearbyStores(latitude, longitude, radius).stream()
@@ -120,12 +127,23 @@ public class StoreService {
     // Entity → DTO 변환
     public StoreResponseDto toResponseDto(Store store) {
         List<Product> products = productRepository.findByStoreId(store.getId());
+
+        List<ProductDto> productDtos = products.stream()
+                .map(p -> new ProductDto(
+                        p.getId(),
+                        p.getName(),
+                        p.getPrice(),
+                        p.getStockQuantity(),
+                        p.isSoldOut()
+                ))
+                .collect(Collectors.toList());
+
         return new StoreResponseDto(
                 store.getId(),
                 store.getName(),
-                products,
-                (long) store.getLatitude(),
-                (long) store.getLongitude()
+                productDtos,
+                store.getLatitude(),
+                store.getLongitude()
         );
     }
 }

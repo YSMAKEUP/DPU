@@ -61,9 +61,14 @@ public class UserService {
                 .userType(user.getRole())
                 .build();
     }
+    //단건조회
+    public User findById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
 
 
-
+    //
 
 
 

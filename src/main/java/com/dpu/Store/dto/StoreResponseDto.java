@@ -1,6 +1,5 @@
 package com.dpu.Store.dto;
-
-import com.dpu.Product.domain.Product;
+import com.dpu.Product.dto.ProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +14,9 @@ public class StoreResponseDto {
 
     private Long storeId;
     private String storeName;
-    private List<Product> products;
-    private long latitude;
-    private long longitude;
+    private List<ProductDto> products; // Product 엔티티 -> ProductDto
+    private double latitude;  // long -> double
+    private double longitude;
 
 
 

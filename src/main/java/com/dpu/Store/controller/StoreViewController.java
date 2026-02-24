@@ -25,7 +25,7 @@ public class StoreViewController {
     public String storeDetail(@PathVariable Long storeId, Model model) {
         model.addAttribute("storeId", storeId);
         // model.addAttribute("store", storeService.findById(storeId));
-        return "store/detail";  // ❌ "store/{storeId}" 아님!
+        return "store/detail";
     }
 
     // 해당 가게 상품 목록
