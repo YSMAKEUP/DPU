@@ -1,6 +1,4 @@
 package com.dpu.Product.dto;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

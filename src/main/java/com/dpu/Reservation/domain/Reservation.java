@@ -37,6 +37,18 @@ public class Reservation {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+
+    public List<OrderItem> getOrderItems(){
+        return orderItems;
+    }
+
+    public int getTotalAmount() {
+        return orderItems.stream()
+                .mapToInt(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+
     @PrePersist
     public void prePersist() {
         if (this.createdAt == null) {
