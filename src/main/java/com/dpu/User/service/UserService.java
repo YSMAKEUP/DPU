@@ -47,11 +47,11 @@ public class UserService {
     }
 
     //로그인
-    public LoginResponseDto login(LoginRequestDto requestDto){
+    public LoginResponseDto login(LoginRequestDto requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않은 이메일입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 이메일입니다."));
 
-        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -59,6 +59,8 @@ public class UserService {
                 .result("success")
                 .userId(user.getId())
                 .userType(user.getRole())
+                .name(user.getName())   // 추가
+                .email(user.getEmail()) // 추가
                 .build();
     }
     //단건조회
