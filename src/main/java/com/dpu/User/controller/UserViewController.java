@@ -23,7 +23,14 @@ public class UserViewController {
 
     // 회원가입 처리
     @PostMapping("/signup")
-    public String signup(@ModelAttribute SignUpRequestDto requestDto){
+    public String signup(@ModelAttribute SignUpRequestDto requestDto,
+                         @RequestParam(required = false) String email,
+                         @RequestParam(required = false) String password,
+                         @RequestParam(required = false) String role
+    ){ System.out.println("REQ email=" + email);
+        System.out.println("REQ password=" + password);
+        System.out.println("REQ role=" + role);
+
         userService.signUp(requestDto);
         return "redirect:/login";
     }

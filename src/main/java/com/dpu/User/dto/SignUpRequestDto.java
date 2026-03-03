@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 //회원가입 DTO.
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class SignUpRequestDto {
     @NotBlank(message ="비밀번호를 입력해주세요.")
     private String password;
 
-    private Role userType ;
+    private Role role ;
 
 
 }

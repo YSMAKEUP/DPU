@@ -279,7 +279,7 @@
     <p class="signup-subtitle">Sweet Pickup과 함께 시작하세요</p>
 
     <!-- 회원가입 폼 -->
-    <form th:action="@{/users/signup}" method="post">
+    <form th:action="@{/signup}" method="post">
         <!-- 이름 -->
         <div class="form-group">
             <label class="form-label" for="name">이름</label>
@@ -340,7 +340,7 @@
 
     <!-- 로그인 링크 -->
     <div class="login-link">
-        이미 계정이 있으신가요? <a th:href="@{/users/login}">로그인</a>
+        이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
     </div>
 </div>
 
