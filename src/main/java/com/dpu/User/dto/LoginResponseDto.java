@@ -12,9 +12,10 @@ public class LoginResponseDto {
 
     private String result;
     private Long userId;
-    private Role userType;
+    private Role role;
     private String name;
     private String email;
+
 
 
 }

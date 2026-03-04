@@ -1,11 +1,9 @@
-
 <!--마이페이지-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이페이지 - Sweet Pickup</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .mypage-container {
@@ -109,16 +107,16 @@
     </style>
 </head>
 <body>
-<!-- Header (기존 index.html의 header 재사용) -->
+<!-- Header -->
 <header class="header">
     <div class="container">
         <div class="nav-wrapper">
             <div class="nav-left">
                 <a th:href="@{/}" class="logo">Sweet Pickup</a>
             </div>
-            <div class="nav-right">
-                <a th:href="@{/users/logout}" class="btn-outline">로그아웃</a>
-            </div>
+<!--            <div class="nav-right">-->
+<!--                <a th:href="@{/users/logout}" class="btn-outline">로그아웃</a>-->
+<!--            </div>-->
         </div>
     </div>
 </header>
@@ -126,7 +124,7 @@
 <div class="mypage-container">
     <div class="mypage-header">
         <h1 class="mypage-title" th:text="${user.name} + '님'">홍길동님</h1>
-        <span class="user-badge" th:text="${user.role == T(com.dpu.User.domain.Role).OWNER} ? '사장님' : '일반 회원'">일반 회원</span>
+        <span class="user-badge" th:text="${user.role.name() == 'OWNER'} ? '사장님' : '일반 회원'">일반 회원</span>
     </div>
 
     <!-- 회원 정보 -->
@@ -145,24 +143,23 @@
 
         <div class="info-row">
             <span class="info-label">회원 유형</span>
-            <span class="info-value" th:text="${user.role == T(com.dpu.User.domain.Role).OWNER} ? '사장님' : '일반 회원'">일반 회원</span>
+            <span class="info-value" th:text="${user.role.name() == 'OWNER'} ? '사장님' : '일반 회원'">일반 회원</span>
         </div>
     </div>
 
     <!-- 버튼 그룹 -->
     <div class="button-group">
-        <button class="btn btn-primary" onclick="location.href='/users/edit'">회원정보 수정</button>
-        <button class="btn btn-secondary" th:if="${user.role == T(com.dpu.User.domain.Role).USER}"
-                onclick="location.href='/reservations/my'">내 예약 보기</button>
-        <button class="btn btn-secondary" th:if="${user.role == T(com.dpu.User.domain.Role).OWNER}"
+        <button class="btn btn-primary" onclick="location.href='/user_edit'">회원정보 수정</button>
+        <button class="btn btn-secondary" th:if="${user.role.name() == 'USER'}"
+                onclick="location.href='/reservation'">내 예약 보기</button>
+        <button class="btn btn-secondary" th:if="${user.role.name() == 'OWNER'}"
                 onclick="location.href='/stores'">내 매장 관리</button>
     </div>
 
     <div class="button-group">
         <button class="btn btn-secondary" onclick="location.href='/'">홈으로</button>
-        <form th:action="@{/users/delete}" method="post" style="flex: 1;"
-              onsubmit="return confirm('정말 탈퇴하시겠습니까?');">
-            <button type="submit" class="btn btn-danger" style="width: 100%;">회원탈퇴</button>
+        <form th:action="@{/user_delete}" method="post">
+            <button type="submit" onclick="return confirm('정말 탈퇴하시겠습니까?')">회원탈퇴</button>
         </form>
     </div>
 </div>

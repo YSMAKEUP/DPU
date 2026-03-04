@@ -16,6 +16,72 @@
             overflow: hidden;
         }
 
+        /* 우측 상단 네비게이션 */
+        .top-nav {
+            position: fixed;
+            top: 24px;
+            right: 32px;
+            z-index: 100;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 10px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+        }
+
+        .nav-btn-mypage {
+            background: white;
+            color: #8b5a3c;
+            border: 2px solid #8b5a3c;
+            box-shadow: 0 2px 10px rgba(139, 90, 60, 0.15);
+        }
+
+        .nav-btn-mypage:hover {
+            background: #8b5a3c;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 90, 60, 0.3);
+        }
+
+        .nav-btn-logout {
+            background: #8b5a3c;
+            color: white;
+            border: 2px solid #8b5a3c;
+            box-shadow: 0 2px 10px rgba(139, 90, 60, 0.2);
+        }
+
+        .nav-btn-logout:hover {
+            background: #6d4a31;
+            border-color: #6d4a31;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 90, 60, 0.35);
+        }
+
+        /* 로그인하지 않은 상태에서만 보이는 로그인 버튼 */
+        .nav-btn-login {
+            background: white;
+            color: #8b5a3c;
+            border: 2px solid #8b5a3c;
+            box-shadow: 0 2px 10px rgba(139, 90, 60, 0.15);
+        }
+
+        .nav-btn-login:hover {
+            background: #8b5a3c;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 90, 60, 0.3);
+        }
+
         .intro-container {
             height: 100vh;
             display: flex;
@@ -177,6 +243,17 @@
 
         /* 반응형 */
         @media (max-width: 768px) {
+            .top-nav {
+                top: 16px;
+                right: 16px;
+                gap: 8px;
+            }
+
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
             .brand-name {
                 font-size: 40px;
             }
@@ -207,6 +284,21 @@
     </style>
 </head>
 <body>
+
+<!-- 우측 상단 네비게이션 (Thymeleaf로 로그인 여부 분기) -->
+<div class="top-nav">
+    <!-- 로그인된 경우 -->
+    <th:block th:if="${session.loginUser != null}">
+        <a th:href="@{/mypage}" class="nav-btn nav-btn-mypage">마이페이지</a>
+        <a th:href="@{/logout}" class="nav-btn nav-btn-logout">로그아웃</a>
+    </th:block>
+
+    <!-- 로그인 안 된 경우 -->
+    <th:block th:unless="${session.loginUser != null}">
+        <a th:href="@{/login}" class="nav-btn nav-btn-login">로그인</a>
+    </th:block>
+</div>
+
 <div class="intro-container">
     <!-- 배경 장식 -->
     <div class="bg-decoration circle-1"></div>
@@ -220,8 +312,9 @@
         <p class="tagline">달콤한 순간을 더 특별하게</p>
 
         <div class="cta-buttons">
-            <a th:href="@{/}" class="btn btn-primary">디저트 둘러보기</a>
-            <a th:href="@{/login}" class="btn btn-secondary">로그인</a>
+            <a th:href="@{/stores/list}" class="btn btn-primary">디저트 둘러보기</a>
+            <!-- 로그인 안 된 경우에만 로그인 버튼 표시 -->
+            <a th:if="${session.loginUser == null}" th:href="@{/login}" class="btn btn-secondary">로그인</a>
         </div>
     </div>
 

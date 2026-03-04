@@ -11,13 +11,13 @@ public class ReservationViewController {
     // 예약 페이지
     @GetMapping
     public String reservationPage() {
-        return "reservation/reservation";
+        return "reservation";
     }
 
     // 예약 상세 페이지
-    @GetMapping("/{reservationId}")
+    @GetMapping("detail/{reservationId}")
     public String reservationDetailPage(@PathVariable Long reservationId, Model model) {
         model.addAttribute("reservationId", reservationId);
-        return "reservation/reservation_detail";
+        return "reservation_detail";
     }
 }

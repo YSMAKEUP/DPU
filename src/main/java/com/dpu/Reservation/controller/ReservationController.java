@@ -11,7 +11,7 @@ import com.dpu.Reservation.service.ReservationService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/reservations")
+@RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
     // 픽업 예약 생성

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원정보 수정</title>
+</head>
+<body>
+
+<h2>회원정보 수정</h2>
+
+<div th:if="${msg}" style="color: green;" th:text="${msg}"></div>
+<div th:if="${error}" style="color: red;" th:text="${error}"></div>
+
+<form th:action="@{/user_edit}" th:object="${userForm}" method="post">
+
+  <div>
+    <label>이름</label>
+    <input type="text" th:field="*{name}" required />
+  </div>
+
+  <div>
+    <label>이메일</label>
+    <input type="email" th:field="*{email}" required />
+  </div>
+
+  <hr/>
+  <p>비밀번호 변경 시에만 입력하세요</p>
+
+  <div>
+    <label>새 비밀번호</label>
+    <input type="password" th:field="*{newPassword}" />
+  </div>
+
+  <div>
+    <label>비밀번호 확인</label>
+    <input type="password" th:field="*{confirmPassword}" />
+  </div>
+
+  <button type="submit">수정하기</button>
+</form>
+
+</body>
+</html>

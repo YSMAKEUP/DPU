@@ -1,10 +1,7 @@
 package com.dpu.User.service;
 
 import com.dpu.User.domain.User;
-import com.dpu.User.dto.LoginRequestDto;
-import com.dpu.User.dto.LoginResponseDto;
-import com.dpu.User.dto.SignUpRequestDto;
-import com.dpu.User.dto.SignUpResponseDto;
+import com.dpu.User.dto.*;
 import com.dpu.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,7 +56,7 @@ public class UserService {
         return LoginResponseDto.builder()
                 .result("success")
                 .userId(user.getId())
-                .userType(user.getRole())
+                .role(user.getRole())
                 .name(user.getName())   // 추가
                 .email(user.getEmail()) // 추가
                 .build();
@@ -70,12 +67,23 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 
+    public void updateUser(Long id, UserUpdateDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
 
-    //
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+
+        if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
+            if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            }
+            user.setPassword(dto.getNewPassword());
+        }
+    }
 
 
-
-
-
-
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
+    }
 }
