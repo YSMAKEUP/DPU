@@ -28,8 +28,7 @@ public class StoreController {
     @GetMapping("/search")
     public ResponseEntity<List<StoreResponseDto>> searchStores(
             @RequestParam String name) {
-        // storeService.getStore(name) 사용
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(storeService.getStore(name));
     }
 
     // 특정 가게 조회
