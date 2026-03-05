@@ -87,6 +87,11 @@ public class StoreService {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다."));
     }
+    public StoreResponseDto getStoreById(Long storeId) {
+        Store store = findById(storeId);
+        return toResponseDto(store);
+    }
+
 
     //특정 가게 검증 (처음에 권한 조회,
     public Store findByIdAndOwnerId(Long storeId, Long ownerId) {
@@ -123,6 +128,13 @@ public class StoreService {
         LocalTime deadline = store.getCloseTime().minusMinutes(minutes);
         return LocalTime.now().isBefore(deadline);
     }
+    private boolean isStoreOpen(Store store) {
+        if (store.getOpenTime() == null || store.getCloseTime() == null) return false;
+        LocalTime now = LocalTime.now();
+        return now.isAfter(store.getOpenTime()) && now.isBefore(store.getCloseTime());
+    }
+
+
 
     // Entity → DTO 변환
     public StoreResponseDto toResponseDto(Store store) {
@@ -143,7 +155,12 @@ public class StoreService {
                 store.getName(),
                 productDtos,
                 store.getLatitude(),
-                store.getLongitude()
+                store.getLongitude(),
+                store.getAddress(),        // 추가
+                store.getOpenTime(),       // 추가
+                store.getCloseTime(),      // 추가
+                store.getClosedDay(),
+                isStoreOpen(store)
         );
     }
 }

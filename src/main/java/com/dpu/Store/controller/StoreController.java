@@ -20,7 +20,6 @@ public class StoreController {
     public ResponseEntity<List<StoreResponseDto>> getNearbyStores(
             @RequestParam double latitude,
             @RequestParam double longitude) {
-        // TODO: 거리 계산 로직 구현 필요
         return ResponseEntity.ok().build();
     }
 

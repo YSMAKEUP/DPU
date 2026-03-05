@@ -195,17 +195,17 @@
         </div>
 
         <div class="store-card" th:each="store, iterStat : ${stores}"
-             th:onclick="|location.href='@{/stores/{id}(id=${store.id})}'|"
+             th:onclick="|location.href='@{/stores/{id}(id=${store.storeId})}'|"
              th:data-lat="${store.latitude}"
              th:data-lng="${store.longitude}"
-             th:data-name="${store.name}"
+             th:data-name="${store.storeName}"
              th:data-address="${store.address}"
              th:data-index="${iterStat.index}"
              onmouseenter="highlightMarker(this)"
              onmouseleave="unhighlightMarker(this)">
           <div class="store-card-content">
             <div class="store-info-section">
-              <div class="store-name" th:text="${store.name}">가게 이름</div>
+              <div class="store-name" th:text="${store.storeName}">가게 이름</div>
               <div class="store-info">
                 <i class="fas fa-map-marker-alt"></i>
                 <span th:text="${store.address}">주소</span>

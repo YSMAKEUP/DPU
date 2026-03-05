@@ -17,15 +17,17 @@ public class StoreViewController {
 
     // 가게 목록
     @GetMapping("/list")
-    public String storeList() {
+    public String storeList(@RequestParam(required = false) String name, Model model) {
+        if (name != null && !name.isBlank()) {
+            model.addAttribute("stores", storeService.getStore(name));
+        }
         return "list";
     }
 
     // 해당 가게 상세 페이지
-    @GetMapping("/{storeId}")
+   @GetMapping("/{storeId}")
     public String storeDetail(@PathVariable Long storeId, Model model) {
-        model.addAttribute("storeId", storeId);
-        // model.addAttribute("store", storeService.findById(storeId));
+        model.addAttribute("store", storeService.getStoreById(storeId));
         return "detail";
     }
 
@@ -42,4 +44,5 @@ public class StoreViewController {
     public String storeMap(Model model) {
         return "store/map";
     }
+
 }
