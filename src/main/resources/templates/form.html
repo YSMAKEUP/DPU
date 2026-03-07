@@ -1,4 +1,3 @@
-
 <!--관리자용-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
@@ -85,11 +84,11 @@
 
       <!-- 상품명 -->
       <div class="mb-4">
-        <label for="name" class="form-label">
+        <label for="productName" class="form-label">
           상품명 <span class="required">*</span>
         </label>
-        <input type="text" class="form-control" id="name" name="name"
-               th:field="*{name}" required placeholder="예) 초코 케이크">
+        <input type="text" class="form-control" id="productName" name="productName"
+               th:field="*{productName}" required placeholder="예) 초코 케이크">
         <div class="form-text">고객에게 보여질 상품명을 입력하세요</div>
       </div>
 
@@ -105,11 +104,11 @@
 
       <!-- 재고 수량 -->
       <div class="mb-4">
-        <label for="quantity" class="form-label">
+        <label for="stockQuantity" class="form-label">
           재고 수량 <span class="required">*</span>
         </label>
-        <input type="number" class="form-control" id="quantity" name="quantity"
-               th:field="*{quantity}" required min="0" placeholder="10">
+        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity"
+               th:field="*{stockQuantity}" required min="0" placeholder="10">
         <div class="form-text">현재 보유 중인 재고 수량을 입력하세요</div>
       </div>
 

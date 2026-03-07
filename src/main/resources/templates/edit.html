@@ -95,19 +95,19 @@
 
     <!-- 상품 정보 표시 -->
     <div class="info-box">
-      <small class="text-muted">상품 ID: <span th:text="${product.id}"></span></small><br>
+      <small class="text-muted">상품 ID: <span th:text="${product.productId}"></span></small><br>
       <small class="text-muted">등록일: <span th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}"></span></small>
     </div>
 
-    <form th:action="@{/products/{id}(id=${product.id})}" method="post" th:object="${product}">
+    <form th:action="@{/products/{id}(id=${product.productId})}" method="post" th:object="${product}">
       <input type="hidden" name="_method" value="PUT">
-      <input type="hidden" name="storeId" th:value="${product.store.id}">
+      <input type="hidden" name="storeId" th:value="${product.storeId}"> <!-- ← 추가 -->
 
       <!-- 상품명 (수정 불가, 참고용) -->
       <div class="mb-4">
-        <label for="name" class="form-label">상품명</label>
-        <input type="text" class="form-control" id="name" name="name"
-               th:field="*{name}" readonly style="background-color: #e9ecef;">
+        <label for="productName" class="form-label">상품명</label>
+        <input type="text" class="form-control" id="productName" name="productName"
+               th:field="*{productName}" readonly style="background-color: #e9ecef;">
         <div class="form-text">상품명은 수정할 수 없습니다</div>
       </div>
 
@@ -123,12 +123,12 @@
 
       <!-- 재고 수량 -->
       <div class="mb-4">
-        <label for="quantity" class="form-label">
+        <label for="stockQuantity" class="form-label">
           재고 수량 <span class="required">*</span>
         </label>
-        <input type="number" class="form-control" id="quantity" name="quantity"
-               th:field="*{quantity}" required min="0">
-        <div class="form-text">현재 재고: <strong th:text="${product.quantity}"></strong>개</div>
+        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity"
+               th:field="*{stockQuantity}" required min="0">
+        <div class="form-text">현재 재고: <strong th:text="${product.stockQuantity}"></strong>개</div>
       </div>
 
       <!-- 품절 여부 -->
@@ -146,15 +146,16 @@
         <button type="submit" class="btn btn-primary btn-submit">
           <i class="fas fa-save"></i> 수정하기
         </button>
-        <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-secondary btn-cancel">
+        <a th:href="@{/products/{id}/edit(id=${product.productId})}" class="btn btn-secondary btn-cancel">
           <i class="fas fa-times"></i> 취소
         </a>
       </div>
     </form>
 
     <!-- 삭제 폼 (별도) -->
-    <form th:action="@{/products/{id}/delete(id=${product.id})}" method="post"
+    <form th:action="@{/products/{id}/delete(id=${product.productId})}" method="post"
           onsubmit="return confirm('정말 삭제하시겠습니까?');">
+      <input type="hidden" name="storeId" th:value="${product.storeId}">
       <button type="submit" class="btn btn-danger btn-delete">
         <i class="fas fa-trash"></i> 삭제하기
       </button>

@@ -289,6 +289,9 @@
 <div class="top-nav">
     <!-- 로그인된 경우 -->
     <th:block th:if="${session.loginUser != null}">
+        <!-- 사장님일 때만 대시보드 버튼 추가 -->
+        <a th:if="${session.loginUser?.role?.name() == 'OWNER'}"
+           th:href="@{/dashboard}" class="nav-btn nav-btn-mypage">내 매장 관리</a>
         <a th:href="@{/mypage}" class="nav-btn nav-btn-mypage">마이페이지</a>
         <a th:href="@{/logout}" class="nav-btn nav-btn-logout">로그아웃</a>
     </th:block>

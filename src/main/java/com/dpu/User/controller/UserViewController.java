@@ -74,11 +74,11 @@ public class UserViewController {
     }
 
     //회원정보 수정
-    //회원정보 수정
     @GetMapping("/user_edit")
     public String editForm(HttpSession session, Model model) {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
-        if (loginUser == null) return "redirect:/login";
+        if (loginUser == null)
+            return "redirect:/login";
 
         UserUpdateDto dto = new UserUpdateDto();
         dto.setName(loginUser.getName());

@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRequestDto {
-    private Long storeId;
-    private String productName;
+public class ProductUpdateDto {
     private int price;
     private int stockQuantity;
     private boolean soldOut;

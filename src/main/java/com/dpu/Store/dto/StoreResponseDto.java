@@ -19,10 +19,10 @@ public class StoreResponseDto {
     private List<ProductDto> products; // Product 엔티티 -> ProductDto
     private double latitude;  // long -> double
     private double longitude;
-    private String address;       // 추가
-    private LocalTime openTime;   // 추가
-    private LocalTime closeTime;  // 추가
-    private Integer closedDay;    // 추가
+    private String address;
+    private LocalTime openTime;
+    private LocalTime closeTime;
+    private Integer closedDay;
     private boolean isOpen;
 
 }

@@ -7,6 +7,8 @@ import com.dpu.Store.dto.StoreCreateRequestDto;
 import com.dpu.Store.dto.StoreResponseDto;
 import com.dpu.Store.repository.StoreRepository;
 import com.dpu.Store.domain.Store;
+import com.dpu.User.domain.User;
+import com.dpu.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,15 +25,20 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository; // 추가
 
     // 가게 등록
     @Transactional
-    public Long createStore(StoreCreateRequestDto requestDto) {
+    public Long createStore(StoreCreateRequestDto requestDto, Long ownerId) {
         if (storeRepository.existsByName(requestDto.getName())) {
             throw new IllegalArgumentException("이미 존재하는 가게 이름입니다.");
         }
 
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
         Store store = new Store();
+        store.setUser(owner); // owner 설정 추가!
         store.setName(requestDto.getName());
         store.setAddress(requestDto.getAddress());
         store.setLongitude(requestDto.getLongitude());
@@ -87,17 +93,18 @@ public class StoreService {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다."));
     }
+
     public StoreResponseDto getStoreById(Long storeId) {
         Store store = findById(storeId);
         return toResponseDto(store);
     }
 
-
-    //특정 가게 검증 (처음에 권한 조회,
+    // 특정 가게 검증 (권한 조회)
     public Store findByIdAndOwnerId(Long storeId, Long ownerId) {
         return storeRepository.findByIdAndOwnerId(storeId, ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("권한이 없습니다."));
     }
+
     // 주변 가게 조회
     public List<StoreResponseDto> getNearbyStores(double latitude, double longitude, double radius) {
         return storeRepository.findNearbyStores(latitude, longitude, radius).stream()
@@ -128,13 +135,12 @@ public class StoreService {
         LocalTime deadline = store.getCloseTime().minusMinutes(minutes);
         return LocalTime.now().isBefore(deadline);
     }
+
     private boolean isStoreOpen(Store store) {
         if (store.getOpenTime() == null || store.getCloseTime() == null) return false;
         LocalTime now = LocalTime.now();
         return now.isAfter(store.getOpenTime()) && now.isBefore(store.getCloseTime());
     }
-
-
 
     // Entity → DTO 변환
     public StoreResponseDto toResponseDto(Store store) {
@@ -143,10 +149,12 @@ public class StoreService {
         List<ProductDto> productDtos = products.stream()
                 .map(p -> new ProductDto(
                         p.getId(),
+                        p.getStore().getId(),
                         p.getName(),
                         p.getPrice(),
                         p.getStockQuantity(),
-                        p.isSoldOut()
+                        p.isSoldOut(),
+                        p.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
 
@@ -156,9 +164,9 @@ public class StoreService {
                 productDtos,
                 store.getLatitude(),
                 store.getLongitude(),
-                store.getAddress(),        // 추가
-                store.getOpenTime(),       // 추가
-                store.getCloseTime(),      // 추가
+                store.getAddress(),
+                store.getOpenTime(),
+                store.getCloseTime(),
                 store.getClosedDay(),
                 isStoreOpen(store)
         );

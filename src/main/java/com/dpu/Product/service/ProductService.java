@@ -26,7 +26,7 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다."));
 
         List<ProductDto> productDtos = productRepository.findByStoreId(storeId).stream()
-                .map(p -> new ProductDto(p.getId(), p.getName(), p.getPrice(), p.getStockQuantity(), p.isSoldOut()))
+                .map(p -> new ProductDto(p.getId(), p.getStore().getId(), p.getName(), p.getPrice(), p.getStockQuantity(), p.isSoldOut(), p.getCreatedAt()))
                 .collect(Collectors.toList());
 
         return new ProductResponseDto(storeId, store.getName(), productDtos);
@@ -37,7 +37,15 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
-        return new ProductDto(product.getId(), product.getName(), product.getPrice(), product.getStockQuantity(), product.isSoldOut());
+        return new ProductDto(
+                product.getId(),
+                product.getStore().getId(),  // ← storeId 추가
+                product.getName(),
+                product.getPrice(),
+                product.getStockQuantity(),
+                product.isSoldOut(),
+                product.getCreatedAt()       // ← createdAt 추가
+        );
     }
 
     // 상품 등록
@@ -74,11 +82,13 @@ public class ProductService {
 
     // 상품 삭제
     @Transactional
-    public void deleteProduct(Long productId) {
+    public Long deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
+        Long storeId = product.getStore().getId(); // ← storeId 먼저 저장
         productRepository.delete(product);
+        return storeId; // ← storeId 반환으로 변경
     }
 
     // 예약 생성 시 재고 감소
@@ -94,7 +104,7 @@ public class ProductService {
         product.setQuantity(product.getQuantity() - count);
 
         if (product.getQuantity() == 0) {
-            product.setSoldOut(true); // 예외 말고 자동 품절 처리
+            product.setSoldOut(true);
         }
     }
 

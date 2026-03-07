@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>매장 등록 - Sweet Pickup</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+        background: linear-gradient(135deg, #faf8f5 0%, #f5f0eb 50%, #e8dfd5 100%);
+        min-height: 100vh;
+        padding: 60px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c1f14;
+        margin-bottom: 32px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 36px 40px;
+        width: 100%;
+        max-width: 560px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        margin-bottom: 20px;
+    }
+
+    .card-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #2c1f14;
+        margin-bottom: 24px;
+    }
+
+    .form-row {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-size: 13px;
+        color: #8c7b6b;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="time"],
+    select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #e0d8d0;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #2c1f14;
+        background: #faf9f7;
+        transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #7b4f2e;
+        background: #fff;
+    }
+
+    input[readonly] {
+        background: #f0ebe4;
+        color: #6b5a4e;
+    }
+
+    /* 주소 검색 영역 */
+    .address-search-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .address-search-row input {
+        flex: 1;
+    }
+
+    .btn-search-address {
+        padding: 12px 16px;
+        background: #7b4f2e;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+    }
+    .btn-search-address:hover { opacity: 0.85; }
+
+    /* 지도 */
+    #map {
+        width: 100%;
+        height: 240px;
+        border-radius: 12px;
+        margin-top: 12px;
+        overflow: hidden;
+        display: none;
+    }
+
+    .time-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .hint {
+        font-size: 12px;
+        color: #b0a090;
+        margin-top: 4px;
+    }
+
+    /* 버튼 */
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        width: 100%;
+        max-width: 560px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 16px;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: opacity 0.15s;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn:hover { opacity: 0.88; }
+
+    .btn-primary { background: #7b4f2e; color: #fff; }
+    .btn-secondary {
+        background: #f0ebe4;
+        color: #2c1f14;
+        border: 1px solid #ddd4c8;
+    }
+
+    .msg-error {
+        background: #fdecea;
+        color: #c62828;
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<h2 class="page-title">매장 등록</h2>
+
+<div class="card">
+  <div class="card-title">매장 정보 입력</div>
+
+  <div th:if="${error}" class="msg-error" th:text="${error}"></div>
+
+  <form th:action="@{/stores/new}" th:object="${storeForm}" method="post" id="storeForm">
+
+    <!-- 매장명 -->
+    <div class="form-row">
+      <label>매장명 *</label>
+      <input type="text" th:field="*{name}" placeholder="예) 달콤한 베이커리" required />
+    </div>
+
+    <!-- 주소 검색 -->
+    <div class="form-row">
+      <label>주소 *</label>
+      <div class="address-search-row">
+        <input type="text" id="addressInput" th:field="*{address}"
+               placeholder="주소 검색 버튼을 눌러주세요" readonly required />
+        <button type="button" class="btn-search-address" onclick="searchAddress()">
+          <i class="fas fa-search"></i> 검색
+        </button>
+      </div>
+      <div id="map"></div>
+    </div>
+
+    <!-- 위도/경도/카카오ID (숨김 - 카카오 API로 자동 입력) -->
+    <input type="hidden" id="latitude" th:field="*{latitude}" />
+    <input type="hidden" id="longitude" th:field="*{longitude}" />
+    <input type="hidden" id="kakaoPlaceId" th:field="*{kakaoPlaceId}" />
+
+    <!-- 영업 시간 -->
+    <div class="form-row">
+      <label>영업 시간 *</label>
+      <div class="time-row">
+        <div>
+          <input type="time" th:field="*{openTime}" required />
+          <div class="hint">오픈 시간</div>
+        </div>
+        <div>
+          <input type="time" th:field="*{closeTime}" required />
+          <div class="hint">마감 시간</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 정기 휴무일 -->
+    <div class="form-row">
+      <label>정기 휴무일</label>
+      <select th:field="*{closedDay}">
+        <option value="">없음</option>
+        <option value="1">월요일</option>
+        <option value="2">화요일</option>
+        <option value="3">수요일</option>
+        <option value="4">목요일</option>
+        <option value="5">금요일</option>
+        <option value="6">토요일</option>
+        <option value="7">일요일</option>
+      </select>
+    </div>
+
+    <!-- 픽업 마감 -->
+    <div class="form-row">
+      <label>픽업 마감 (분 전)</label>
+      <input type="number" th:field="*{pickupCutoffMinutes}"
+             placeholder="기본 30분" min="0" max="120" />
+      <div class="hint">마감 시간 몇 분 전에 픽업 주문을 마감할지 설정해요 (미입력 시 30분)</div>
+    </div>
+
+  </form>
+</div>
+
+<div class="btn-group">
+  <button type="submit" form="storeForm" class="btn btn-primary">매장 등록</button>
+  <a th:href="@{/dashboard}" class="btn btn-secondary">취소</a>
+</div>
+
+<!-- 카카오 지도 SDK -->
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=30b3dfc1e244b48dfa1c16cec788c438&libraries=services"></script>
+<script>
+  let map;
+  let marker;
+
+  function searchAddress() {
+      const ps = new kakao.maps.services.Places();
+      const keyword = prompt('매장 이름이나 주소를 입력하세요:');
+      if (!keyword) return;
+
+      ps.keywordSearch(keyword, function(data, status) {
+          if (status === kakao.maps.services.Status.OK && data.length > 0) {
+              // 여러 결과면 첫 번째 사용 (또는 목록 선택 가능)
+              const place = data[0];
+
+              // 폼에 값 채우기
+              document.getElementById('addressInput').value = place.road_address_name || place.address_name;
+              document.getElementById('latitude').value = place.y;
+              document.getElementById('longitude').value = place.x;
+              document.getElementById('kakaoPlaceId').value = place.id;
+
+              // 지도 표시
+              showMap(place.y, place.x, place.place_name);
+          } else {
+              alert('검색 결과가 없습니다. 다른 키워드로 검색해보세요.');
+          }
+      });
+  }
+
+  function showMap(lat, lng, name) {
+      const mapDiv = document.getElementById('map');
+      mapDiv.style.display = 'block';
+
+      const position = new kakao.maps.LatLng(lat, lng);
+
+      if (!map) {
+          map = new kakao.maps.Map(mapDiv, {
+              center: position,
+              level: 4
+          });
+          marker = new kakao.maps.Marker({ map: map, position: position });
+      } else {
+          map.setCenter(position);
+          marker.setPosition(position);
+      }
+
+      // 인포윈도우
+      const infowindow = new kakao.maps.InfoWindow({
+          content: `<div style="padding:8px 12px; font-size:13px; font-weight:600; color:#7b4f2e;">🍰 ${name}</div>`
+      });
+      infowindow.open(map, marker);
+  }
+</script>
+</body>
+</html>
