@@ -1,309 +1,246 @@
+<!--관리자용-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>매장 등록 - Sweet Pickup</title>
+  <title>상품 등록</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #f0ebe3;
+      --card-bg: #ffffff;
+      --brown-dark: #4a3728;
+      --brown-mid: #7c5c44;
+      --brown-light: #b08d72;
+      --accent: #c8793a;
+      --border: #e2d8cf;
+      --input-bg: #faf7f4;
+      --text-main: #2d2318;
+      --text-sub: #8a7060;
+      --danger: #c0392b;
+    }
+
+    * { box-sizing: border-box; }
 
     body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-        background: linear-gradient(135deg, #faf8f5 0%, #f5f0eb 50%, #e8dfd5 100%);
-        min-height: 100vh;
-        padding: 60px 16px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(192, 150, 100, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(120, 80, 50, 0.08) 0%, transparent 60%);
+      min-height: 100vh;
+      padding: 48px 16px;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--text-main);
     }
 
     .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: #2c1f14;
-        margin-bottom: 32px;
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--brown-dark);
+      text-align: center;
+      letter-spacing: -0.01em;
+      margin-bottom: 32px;
     }
 
-    .card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 36px 40px;
-        width: 100%;
-        max-width: 560px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        margin-bottom: 20px;
+    .form-container {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 36px 36px 32px;
+      box-shadow: 0 4px 24px rgba(80, 50, 20, 0.10);
+      max-width: 560px;
+      margin: 0 auto;
     }
 
-    .card-title {
-        font-size: 17px;
-        font-weight: 700;
-        color: #2c1f14;
-        margin-bottom: 24px;
+    .section-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--brown-dark);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid var(--border);
     }
 
-    .form-row {
-        margin-bottom: 18px;
+    .field-group {
+      margin-bottom: 20px;
     }
 
-    label {
-        display: block;
-        font-size: 13px;
-        color: #8c7b6b;
-        margin-bottom: 6px;
-        font-weight: 500;
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--brown-dark);
+      margin-bottom: 7px;
     }
 
-    input[type="text"],
-    input[type="number"],
-    input[type="time"],
-    select {
-        width: 100%;
-        padding: 12px 14px;
-        border: 1.5px solid #e0d8d0;
-        border-radius: 10px;
-        font-size: 14px;
-        font-family: inherit;
-        color: #2c1f14;
-        background: #faf9f7;
-        transition: border-color 0.2s;
+    .required {
+      color: var(--accent);
+      margin-left: 2px;
     }
 
-    input:focus, select:focus {
-        outline: none;
-        border-color: #7b4f2e;
-        background: #fff;
+    .form-control,
+    .form-select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      appearance: none;
     }
 
-    input[readonly] {
-        background: #f0ebe4;
-        color: #6b5a4e;
+    .form-control::placeholder {
+      color: #c0b0a0;
     }
 
-    /* 주소 검색 영역 */
-    .address-search-row {
-        display: flex;
-        gap: 8px;
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--brown-light);
+      box-shadow: 0 0 0 3px rgba(176, 141, 114, 0.18);
+      background: #fff;
     }
 
-    .address-search-row input {
-        flex: 1;
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237c5c44' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
     }
 
-    .btn-search-address {
-        padding: 12px 16px;
-        background: #7b4f2e;
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: opacity 0.2s;
-    }
-    .btn-search-address:hover { opacity: 0.85; }
-
-    /* 지도 */
-    #map {
-        width: 100%;
-        height: 240px;
-        border-radius: 12px;
-        margin-top: 12px;
-        overflow: hidden;
-        display: none;
+    .form-text {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      margin-top: 5px;
     }
 
-    .time-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 0.4; }
+
+    .divider {
+      border: none;
+      border-top: 1.5px solid var(--border);
+      margin: 28px 0;
     }
 
-    .hint {
-        font-size: 12px;
-        color: #b0a090;
-        margin-top: 4px;
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
     }
 
-    /* 버튼 */
-    .btn-group {
-        display: flex;
-        gap: 12px;
-        width: 100%;
-        max-width: 560px;
+    .btn-submit {
+      flex: 1;
+      background: var(--brown-dark);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.12s;
+      letter-spacing: 0.04em;
+    }
+    .btn-submit:hover {
+      background: var(--brown-mid);
+      transform: translateY(-1px);
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-cancel {
+      flex: 1;
+      background: #fff;
+      color: var(--brown-mid);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .btn-cancel:hover {
+      border-color: var(--brown-light);
+      background: var(--input-bg);
+      color: var(--brown-dark);
     }
 
-    .btn {
-        flex: 1;
-        padding: 16px;
-        border-radius: 10px;
-        font-family: inherit;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        transition: opacity 0.15s;
-        text-align: center;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .btn:hover { opacity: 0.88; }
-
-    .btn-primary { background: #7b4f2e; color: #fff; }
-    .btn-secondary {
-        background: #f0ebe4;
-        color: #2c1f14;
-        border: 1px solid #ddd4c8;
-    }
-
-    .msg-error {
-        background: #fdecea;
-        color: #c62828;
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
+    @media (max-width: 600px) {
+      .form-container { padding: 24px 18px 20px; }
+      .page-title { font-size: 1.5rem; }
+      .btn-row { flex-direction: column; }
     }
   </style>
 </head>
 <body>
+<div class="container">
 
-<h2 class="page-title">매장 등록</h2>
+  <h1 class="page-title">상품 등록</h1>
 
-<div class="card">
-  <div class="card-title">매장 정보 입력</div>
+  <div class="form-container">
+    <div class="section-title">상품 정보 입력</div>
 
-  <div th:if="${error}" class="msg-error" th:text="${error}"></div>
+    <form th:action="@{/products}" method="post" th:object="${product}">
+      <input type="hidden" name="storeId" th:value="${storeId}">
 
-  <form th:action="@{/stores/new}" th:object="${storeForm}" method="post" id="storeForm">
-
-    <!-- 매장명 -->
-    <div class="form-row">
-      <label>매장명 *</label>
-      <input type="text" th:field="*{name}" placeholder="예) 달콤한 베이커리" required />
-    </div>
-
-    <!-- 주소 검색 -->
-    <div class="form-row">
-      <label>주소 *</label>
-      <div class="address-search-row">
-        <input type="text" id="addressInput" th:field="*{address}"
-               placeholder="주소 검색 버튼을 눌러주세요" readonly required />
-        <button type="button" class="btn-search-address" onclick="searchAddress()">
-          <i class="fas fa-search"></i> 검색
-        </button>
+      <!-- 상품명 -->
+      <div class="field-group">
+        <label for="productName" class="form-label">상품명<span class="required">*</span></label>
+        <input type="text" class="form-control" id="productName" name="productName"
+               th:field="*{productName}" required placeholder="예) 초코 케이크">
+        <div class="form-text">고객에게 보여질 상품명을 입력하세요</div>
       </div>
-      <div id="map"></div>
-    </div>
 
-    <!-- 위도/경도/카카오ID (숨김 - 카카오 API로 자동 입력) -->
-    <input type="hidden" id="latitude" th:field="*{latitude}" />
-    <input type="hidden" id="longitude" th:field="*{longitude}" />
-    <input type="hidden" id="kakaoPlaceId" th:field="*{kakaoPlaceId}" />
-
-    <!-- 영업 시간 -->
-    <div class="form-row">
-      <label>영업 시간 *</label>
-      <div class="time-row">
-        <div>
-          <input type="time" th:field="*{openTime}" required />
-          <div class="hint">오픈 시간</div>
-        </div>
-        <div>
-          <input type="time" th:field="*{closeTime}" required />
-          <div class="hint">마감 시간</div>
-        </div>
+      <!-- 가격 -->
+      <div class="field-group">
+        <label for="price" class="form-label">가격 (원)<span class="required">*</span></label>
+        <input type="number" class="form-control" id="price" name="price"
+               th:field="*{price}" required min="0" step="100" placeholder="예) 15000">
+        <div class="form-text">판매 가격을 입력하세요</div>
       </div>
-    </div>
 
-    <!-- 정기 휴무일 -->
-    <div class="form-row">
-      <label>정기 휴무일</label>
-      <select th:field="*{closedDay}">
-        <option value="">없음</option>
-        <option value="1">월요일</option>
-        <option value="2">화요일</option>
-        <option value="3">수요일</option>
-        <option value="4">목요일</option>
-        <option value="5">금요일</option>
-        <option value="6">토요일</option>
-        <option value="7">일요일</option>
-      </select>
-    </div>
+      <!-- 재고 수량 -->
+      <div class="field-group">
+        <label for="stockQuantity" class="form-label">재고 수량<span class="required">*</span></label>
+        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity"
+               th:field="*{stockQuantity}" required min="0" placeholder="예) 10">
+        <div class="form-text">현재 보유 중인 재고 수량을 입력하세요</div>
+      </div>
 
-    <!-- 픽업 마감 -->
-    <div class="form-row">
-      <label>픽업 마감 (분 전)</label>
-      <input type="number" th:field="*{pickupCutoffMinutes}"
-             placeholder="기본 30분" min="0" max="120" />
-      <div class="hint">마감 시간 몇 분 전에 픽업 주문을 마감할지 설정해요 (미입력 시 30분)</div>
-    </div>
+      <!-- 판매 상태 -->
+      <div class="field-group">
+        <label for="soldOut" class="form-label">판매 상태</label>
+        <select class="form-select" id="soldOut" name="soldOut" th:field="*{soldOut}">
+          <option value="false">판매중</option>
+          <option value="true">품절</option>
+        </select>
+        <div class="form-text">재고가 있어도 수동으로 품절 처리할 수 있습니다</div>
+      </div>
 
-  </form>
+      <hr class="divider">
+      <div class="btn-row">
+        <button type="submit" class="btn-submit">등록하기</button>
+        <a th:href="@{/stores/{id}(id=${storeId})}" class="btn-cancel">취소</a>
+      </div>
+    </form>
+  </div>
 </div>
 
-<div class="btn-group">
-  <button type="submit" form="storeForm" class="btn btn-primary">매장 등록</button>
-  <a th:href="@{/dashboard}" class="btn btn-secondary">취소</a>
-</div>
-
-<!-- 카카오 지도 SDK -->
-<script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=30b3dfc1e244b48dfa1c16cec788c438&libraries=services"></script>
-<script>
-  let map;
-  let marker;
-
-  function searchAddress() {
-      const ps = new kakao.maps.services.Places();
-      const keyword = prompt('매장 이름이나 주소를 입력하세요:');
-      if (!keyword) return;
-
-      ps.keywordSearch(keyword, function(data, status) {
-          if (status === kakao.maps.services.Status.OK && data.length > 0) {
-              // 여러 결과면 첫 번째 사용 (또는 목록 선택 가능)
-              const place = data[0];
-
-              // 폼에 값 채우기
-              document.getElementById('addressInput').value = place.road_address_name || place.address_name;
-              document.getElementById('latitude').value = place.y;
-              document.getElementById('longitude').value = place.x;
-              document.getElementById('kakaoPlaceId').value = place.id;
-
-              // 지도 표시
-              showMap(place.y, place.x, place.place_name);
-          } else {
-              alert('검색 결과가 없습니다. 다른 키워드로 검색해보세요.');
-          }
-      });
-  }
-
-  function showMap(lat, lng, name) {
-      const mapDiv = document.getElementById('map');
-      mapDiv.style.display = 'block';
-
-      const position = new kakao.maps.LatLng(lat, lng);
-
-      if (!map) {
-          map = new kakao.maps.Map(mapDiv, {
-              center: position,
-              level: 4
-          });
-          marker = new kakao.maps.Marker({ map: map, position: position });
-      } else {
-          map.setCenter(position);
-          marker.setPosition(position);
-      }
-
-      // 인포윈도우
-      const infowindow = new kakao.maps.InfoWindow({
-          content: `<div style="padding:8px 12px; font-size:13px; font-weight:600; color:#7b4f2e;">🍰 ${name}</div>`
-      });
-      infowindow.open(map, marker);
-  }
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
