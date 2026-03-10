@@ -51,6 +51,8 @@ public class OrderItemService {
         if (product.getStockQuantity() < request.getQuantity()) {
             throw new IllegalStateException("재고가 부족합니다.");
         }
+        //재고 확인 후 재고 차감 .
+        product.setQuantity(product.getQuantity() - request.getQuantity());
 
         OrderItem orderItem = OrderItem.builder()
                 .reservation(reservation)

@@ -34,7 +34,7 @@ public class StoreViewController {
         if (loginUser == null || loginUser.getRole() != Role.OWNER) return "redirect:/login";
 
         model.addAttribute("storeForm", new StoreCreateRequestDto());
-        return "store_new";
+        return "Store_new";
     }
 
     // 매장 등록 처리

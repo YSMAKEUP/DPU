@@ -1,14 +1,11 @@
 package com.dpu.Reservation.domain;
 
 public enum ReservationStatus {
-
-    received,
-    preparing,
-    ready
-
-
-
-
+    RECEIVED,    // 픽업 주문 접수
+    PREPARING,   // 준비 중
+    READY,       // 픽업 가능
+    PICKED_UP,   // 픽업 완료
+    CANCELED     // 취소
 }
 
 //RECEIVED : 픽업 주문 접수

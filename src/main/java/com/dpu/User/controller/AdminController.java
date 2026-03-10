@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class AdminController {
 
-    @GetMapping("/dashboard")
+    @GetMapping("/admin")
     public String adminPage(HttpSession session, Model model) {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
 

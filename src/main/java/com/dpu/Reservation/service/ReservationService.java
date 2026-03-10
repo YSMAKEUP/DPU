@@ -1,16 +1,18 @@
 package com.dpu.Reservation.service;
-import com.dpu.Reservation.domain.Reservation;
 
+import com.dpu.Product.domain.Product;
+import com.dpu.Product.repository.ProductRepository;
+import com.dpu.Product.service.ProductService;
+import com.dpu.Reservation.domain.OrderItem;
+import com.dpu.Reservation.domain.Reservation;
 import com.dpu.Reservation.domain.ReservationStatus;
-import com.dpu.Reservation.dto.MyReservationResponseDto;
-import com.dpu.Reservation.dto.OrderItemResponseDto;
-import com.dpu.Reservation.dto.ReservationRequestDto;
-import com.dpu.Reservation.dto.ReservationResponseDto;
+import com.dpu.Reservation.dto.*;
+import com.dpu.Reservation.repository.OrderItemRepository;
 import com.dpu.Reservation.repository.ReservationRepository;
+import com.dpu.Store.repository.StoreRepository;
 import com.dpu.User.domain.User;
 import com.dpu.User.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,73 +28,56 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
+    private final StoreRepository storeRepository;
+    private final ProductService productService;
 
-    @Transactional
-    public Reservation createReservation(Reservation reservation) {
-
-        return reservationRepository.save(reservation);
-
-
-    }
-
-    @Transactional
-    //예약 조회
-    public Reservation getReservation(Long reservationId) {
-
-        return reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 예약입니다."));
-    }
-
-    //내 예약 조회
-
-    @Transactional
-    public List<Reservation> getUserId(Long userId) {
-
-        return reservationRepository.findByUser_Id(userId);
-
-    }
-
-    //특정 상품 조회
-
-    @Transactional
-    public List<Reservation> getProductId(Long productId) {
-        return reservationRepository.findByProductId(productId);
-    }
-
-    //사용자 예약 상태
-
-    @Transactional
-    public List<Reservation> getUserStatus(Long userId, ReservationStatus status) {
-        return reservationRepository.findByUser_IdAndStatus(userId, status);
-    }
-
-    //예약 취소
-    @Transactional
-    public void deleteReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 예약이 존재하지 않습니다. id=" + reservationId));
-
-        reservationRepository.delete(reservation);
-    }
-
-
-    // 기존 메서드들 그대로 유지...
-
-    // 추가 1 - DTO로 예약 생성
-    @Transactional
-    public ReservationResponseDto createReservation(ReservationRequestDto request) {
+    // 공통 - 현재 로그인 유저 조회
+    private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
+
+    // 공통 - 본인 예약 검증
+    private void validateReservationOwner(Reservation reservation, User currentUser) {
+        if (!reservation.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("본인의 예약이 아닙니다.");
+        }
+    }
+
+    // 예약 생성
+    @Transactional
+    public ReservationResponseDto createReservation(ReservationRequestDto request) {
+        User user = getCurrentUser();
 
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setPickupTime(request.getPickTime());
-        reservation.setStatus(ReservationStatus.received);
+        reservation.setStatus(ReservationStatus.RECEIVED);
 
         Reservation saved = reservationRepository.save(reservation);
+
+        if (request.getOrderItems() != null) {
+            for (OrderItemDto item : request.getOrderItems()) {
+                Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+
+                OrderItem orderItem = OrderItem.builder()
+                        .reservation(saved)
+                        .product(product)
+                        .quantity(item.getQuantity())
+                        .price(product.getPrice())
+                        .build();
+
+                orderItemRepository.save(orderItem);
+
+                // ✅ 재고 감소
+                productService.decreaseStock(item.getProductId(), item.getQuantity());
+            }
+        }
 
         return new ReservationResponseDto(
                 saved.getId(),
@@ -104,10 +89,57 @@ public class ReservationService {
         );
     }
 
-    // 추가 2 - DTO로 예약 단건 조회
+    // 예약 단건 조회
+    @Transactional
+    public Reservation getReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 예약입니다."));
+    }
+
+    // 내 예약 조회
+    @Transactional
+    public List<Reservation> getUserId(Long userId) {
+        return reservationRepository.findByUser_Id(userId);
+    }
+
+    // 특정 상품 조회
+    @Transactional
+    public List<Reservation> getProductId(Long productId) {
+        return reservationRepository.findByProductId(productId);
+    }
+
+    // 사용자 예약 상태 조회
+    @Transactional
+    public List<Reservation> getUserStatus(Long userId, ReservationStatus status) {
+        return reservationRepository.findByUser_IdAndStatus(userId, status);
+    }
+
+    // 예약 취소
+    @Transactional
+    public void deleteReservation(Long reservationId) {
+        User currentUser = getCurrentUser();
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 예약이 존재하지 않습니다. id=" + reservationId));
+
+        validateReservationOwner(reservation, currentUser);
+
+        for (OrderItem item : reservation.getOrderItems()) {
+            productService.restoreStock(item.getProduct().getId(), item.getQuantity());
+        }
+
+        orderItemRepository.deleteAll(reservation.getOrderItems());
+        reservationRepository.delete(reservation);
+    }
+
+    // DTO로 예약 단건 조회
     public MyReservationResponseDto getMyReservation(Long reservationId) {
+        User currentUser = getCurrentUser();
+
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+
+        validateReservationOwner(reservation, currentUser);
 
         List<OrderItemResponseDto> orderItems = reservation.getOrderItems().stream()
                 .map(item -> new OrderItemResponseDto(
@@ -130,5 +162,50 @@ public class ReservationService {
         );
     }
 
-}
+    // 사장님 - 가게 전체 예약 조회
+    @Transactional
+    public List<MyReservationResponseDto> getStoreReservations(Long storeId) {
+        return reservationRepository.findByStoreId(storeId).stream()
+                .map(this::toMyReservationResponseDto)
+                .collect(Collectors.toList());
+    }
 
+    // 사장님 - 가게 상태별 예약 조회
+    @Transactional
+    public List<MyReservationResponseDto> getStoreReservationsByStatus(Long storeId, ReservationStatus status) {
+        return reservationRepository.findByStoreIdAndStatus(storeId, status).stream()
+                .map(this::toMyReservationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ 사장님 - 예약 상태 변경
+    @Transactional
+    public void updateReservationStatus(Long reservationId, ReservationStatus status) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 예약이 존재하지 않습니다."));
+        reservation.setStatus(status);
+    }
+
+    // 공통 - Reservation → MyReservationResponseDto 변환
+    private MyReservationResponseDto toMyReservationResponseDto(Reservation reservation) {
+        List<OrderItemResponseDto> orderItems = reservation.getOrderItems().stream()
+                .map(item -> new OrderItemResponseDto(
+                        item.getProduct().getProductName(),
+                        item.getQuantity(),
+                        item.getPrice()
+                ))
+                .collect(Collectors.toList());
+
+        String storeName = reservation.getOrderItems().isEmpty() ? "알 수 없음"
+                : reservation.getOrderItems().get(0).getProduct().getStore().getName();
+
+        return new MyReservationResponseDto(
+                reservation.getId(),
+                storeName,
+                reservation.getPickupTime(),
+                reservation.getStatus(),
+                orderItems,
+                reservation.getTotalAmount()
+        );
+    }
+}

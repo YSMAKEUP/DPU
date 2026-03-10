@@ -19,8 +19,10 @@ public class StoreController {
     @GetMapping
     public ResponseEntity<List<StoreResponseDto>> getNearbyStores(
             @RequestParam double latitude,
-            @RequestParam double longitude) {
-        return ResponseEntity.ok().build();
+            @RequestParam double longitude,
+            @RequestParam(defaultValue = "3.0") double radius) {
+        List<StoreResponseDto> stores = storeService.getNearbyStores(latitude, longitude, radius);
+        return ResponseEntity.ok(stores); // ✅ storeService 연동
     }
 
     // 가게 이름으로 검색
@@ -33,8 +35,8 @@ public class StoreController {
     // 특정 가게 조회
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreResponseDto> getStoreDetail(@PathVariable Long storeId) {
-        // TODO: storeService에 findById 메서드 추가 필요
-        return ResponseEntity.ok().build();
+        StoreResponseDto store = storeService.getStoreById(storeId); // ✅ storeService 연동
+        return ResponseEntity.ok(store);
     }
 
     // 가게 영업 여부 확인

@@ -10,25 +10,38 @@ import java.util.List;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    // 픽업 예약, 예약 내역 조회, 예약 삭제
-    // 전체 조회, 예약 삭제 등 같은 경우에는 이미 JPA에서 기본으로 제공함
-
-    // 특정 조회 - 특정 사용자의 예약, 특정 상품 예약, 특정 상태 예약
 
     // 특정 사용자의 전체 예약 조회
     List<Reservation> findByUser_Id(Long userId);
 
     // 특정 상품의 전체 예약 조회
     @Query("""
-  select distinct r
-  from Reservation r
-  join r.orderItems oi
-  where oi.product.id = :productId
+    select distinct r
+    from Reservation r
+    join r.orderItems oi
+    where oi.product.id = :productId
 """)
     List<Reservation> findByProductId(Long productId);
 
-    // 특정 사용자의 특정 상태 예약 조회 (예: 진행중인 예약만)
+    // 특정 사용자의 특정 상태 예약 조회
     List<Reservation> findByUser_IdAndStatus(Long userId, ReservationStatus status);
 
+    // ✅ 특정 가게의 전체 예약 조회 (사장님용)
+    @Query("""
+    select distinct r
+    from Reservation r
+    join r.orderItems oi
+    where oi.product.store.id = :storeId
+""")
+    List<Reservation> findByStoreId(Long storeId);
 
+    // ✅ 특정 가게의 특정 상태 예약 조회 (사장님용)
+    @Query("""
+    select distinct r
+    from Reservation r
+    join r.orderItems oi
+    where oi.product.store.id = :storeId
+    and r.status = :status
+""")
+    List<Reservation> findByStoreIdAndStatus(Long storeId, ReservationStatus status);
 }

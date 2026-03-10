@@ -62,20 +62,27 @@ public class ProductController {
         return "edit";
     }
 
-    // 상품 수정 처리
+    // 상품 수정 처리 ✅ 권한 검증 추가
     @PostMapping("/products/{id}")
     public String productUpdate(@PathVariable Long id,
                                 @RequestParam Long storeId,
                                 @RequestParam int price,
                                 @RequestParam int stockQuantity,
-                                @RequestParam(defaultValue = "false") boolean soldOut) {
+                                @RequestParam(defaultValue = "false") boolean soldOut,
+                                HttpSession session) {
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
+        if (loginUser == null || loginUser.getRole() != Role.OWNER) return "redirect:/login";
+
         productService.updateProduct(id, storeId, price, stockQuantity, soldOut);
         return "redirect:/dashboard?updated=true";
     }
 
-    // 상품 삭제
+    // 상품 삭제 ✅ 권한 검증 추가
     @PostMapping("/products/{id}/delete")
-    public String productDelete(@PathVariable Long id) {
+    public String productDelete(@PathVariable Long id, HttpSession session) {
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
+        if (loginUser == null || loginUser.getRole() != Role.OWNER) return "redirect:/login";
+
         Long storeId = productService.deleteProduct(id);
         return "redirect:/stores/" + storeId;
     }
