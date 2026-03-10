@@ -1,6 +1,5 @@
 package com.dpu.Product.controller;
 
-import com.dpu.Product.domain.Product;
 import com.dpu.Product.dto.ProductDto;
 import com.dpu.Product.dto.ProductRequestDto;
 import com.dpu.Product.service.ProductService;
@@ -62,10 +61,9 @@ public class ProductController {
         return "edit";
     }
 
-    // 상품 수정 처리 ✅ 권한 검증 추가
+    // [BUG FIX] 상품 수정 처리 - storeId를 클라이언트에서 받지 않고 세션 기반으로 검증
     @PostMapping("/products/{id}")
     public String productUpdate(@PathVariable Long id,
-                                @RequestParam Long storeId,
                                 @RequestParam int price,
                                 @RequestParam int stockQuantity,
                                 @RequestParam(defaultValue = "false") boolean soldOut,
@@ -73,11 +71,16 @@ public class ProductController {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
         if (loginUser == null || loginUser.getRole() != Role.OWNER) return "redirect:/login";
 
-        productService.updateProduct(id, storeId, price, stockQuantity, soldOut);
+        // 세션의 로그인 유저 소유 가게에서 storeId를 직접 조회 → 클라이언트 조작 불가
+        Store store = storeRepository.findByOwner_Id(loginUser.getUserId())
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("매장 정보가 없습니다."));
+
+        productService.updateProduct(id, store.getId(), price, stockQuantity, soldOut);
         return "redirect:/dashboard?updated=true";
     }
 
-    // 상품 삭제 ✅ 권한 검증 추가
+    // 상품 삭제 - 권한 검증
     @PostMapping("/products/{id}/delete")
     public String productDelete(@PathVariable Long id, HttpSession session) {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");

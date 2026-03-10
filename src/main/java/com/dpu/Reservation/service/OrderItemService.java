@@ -6,7 +6,6 @@ import com.dpu.Reservation.domain.OrderItem;
 import com.dpu.Reservation.domain.Reservation;
 import com.dpu.Reservation.dto.OrderItemDto;
 import com.dpu.Reservation.dto.OrderItemResponseDto;
-//import com.dpu.Reservation.repository.OrderItemRepository;
 import com.dpu.Reservation.repository.OrderItemRepository;
 import com.dpu.Reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +50,14 @@ public class OrderItemService {
         if (product.getStockQuantity() < request.getQuantity()) {
             throw new IllegalStateException("재고가 부족합니다.");
         }
-        //재고 확인 후 재고 차감 .
+
+        // 재고 차감
         product.setQuantity(product.getQuantity() - request.getQuantity());
+
+        // [BUG FIX] 재고가 0이 되면 soldOut = true 처리
+        if (product.getQuantity() == 0) {
+            product.setSoldOut(true);
+        }
 
         OrderItem orderItem = OrderItem.builder()
                 .reservation(reservation)

@@ -74,7 +74,7 @@ public class ReservationService {
 
                 orderItemRepository.save(orderItem);
 
-                // ✅ 재고 감소
+                // 재고 감소
                 productService.decreaseStock(item.getProductId(), item.getQuantity());
             }
         }
@@ -132,7 +132,8 @@ public class ReservationService {
         reservationRepository.delete(reservation);
     }
 
-    // DTO로 예약 단건 조회
+    // [BUG FIX] @Transactional 추가 → LAZY 로딩 LazyInitializationException 방지
+    @Transactional
     public MyReservationResponseDto getMyReservation(Long reservationId) {
         User currentUser = getCurrentUser();
 
@@ -178,7 +179,7 @@ public class ReservationService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ 사장님 - 예약 상태 변경
+    // 사장님 - 예약 상태 변경
     @Transactional
     public void updateReservationStatus(Long reservationId, ReservationStatus status) {
         Reservation reservation = reservationRepository.findById(reservationId)

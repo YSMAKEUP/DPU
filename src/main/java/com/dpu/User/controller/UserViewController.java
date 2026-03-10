@@ -18,27 +18,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserViewController {
     private final UserService userService;
 
-    // 회원가입 페이지 (파일명이 signup.html인지 확인 필수!)
+    // 회원가입 페이지
     @GetMapping("/signup")
     public String signupPage(){
-        return "signup"; // 앞에 '/' 제거
+        return "signup";
     }
 
-    // 회원가입 처리
+    // [BUG FIX] 불필요한 @RequestParam 제거 - requestDto에 이미 모든 값이 담겨있음
     @PostMapping("/signup")
-    public String signup(@ModelAttribute SignUpRequestDto requestDto,
-                         @RequestParam(required = false) String email,
-                         @RequestParam(required = false) String password,
-                         @RequestParam(required = false) String role
-    ){
+    public String signup(@ModelAttribute SignUpRequestDto requestDto){
         userService.signUp(requestDto);
         return "redirect:/login";
     }
 
-    // 로그인 페이지 (login.html 매핑)
+    // 로그인 페이지
     @GetMapping("/login")
     public String loginPage(){
-        return "login"; // templates/login.html 호출
+        return "login";
     }
 
     // 로그인 처리
@@ -49,7 +45,7 @@ public class UserViewController {
             session.setAttribute("loginUser", user);
             return "redirect:/";
         }
-        return "redirect:/login?error"; // 로그인 실패 시 에러 파라미터 전달
+        return "redirect:/login?error";
     }
 
     // 로그아웃
@@ -67,10 +63,10 @@ public class UserViewController {
             return "redirect:/login";
         }
         model.addAttribute("user", user);
-        return "mypage"; // 앞에 '/' 제거
+        return "mypage";
     }
 
-    //회원정보 수정
+    // 회원정보 수정 폼
     @GetMapping("/user_edit")
     public String editForm(HttpSession session, Model model) {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
@@ -85,6 +81,7 @@ public class UserViewController {
         return "user_edit";
     }
 
+    // 회원정보 수정 처리
     @PostMapping("/user_edit")
     public String edit(HttpSession session,
                        @ModelAttribute("userForm") UserUpdateDto dto,
@@ -114,15 +111,14 @@ public class UserViewController {
         return "redirect:/user_edit";
     }
 
+    // 회원 탈퇴
     @PostMapping("/user_delete")
     public String deleteUser(HttpSession session) {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
         if (loginUser == null) return "redirect:/login";
 
         userService.deleteUser(loginUser.getUserId());
-        session.invalidate(); // 세션 삭제
+        session.invalidate();
         return "redirect:/login";
     }
-
-
 }

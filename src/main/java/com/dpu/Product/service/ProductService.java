@@ -39,12 +39,12 @@ public class ProductService {
 
         return new ProductDto(
                 product.getId(),
-                product.getStore().getId(),  // ← storeId 추가
+                product.getStore().getId(),
                 product.getName(),
                 product.getPrice(),
                 product.getStockQuantity(),
                 product.isSoldOut(),
-                product.getCreatedAt()       // ← createdAt 추가
+                product.getCreatedAt()
         );
     }
 
@@ -86,9 +86,9 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
-        Long storeId = product.getStore().getId(); // ← storeId 먼저 저장
+        Long storeId = product.getStore().getId();
         productRepository.delete(product);
-        return storeId; // ← storeId 반환으로 변경
+        return storeId;
     }
 
     // 예약 생성 시 재고 감소
