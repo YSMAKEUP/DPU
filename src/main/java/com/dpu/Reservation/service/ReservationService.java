@@ -132,7 +132,7 @@ public class ReservationService {
         reservationRepository.delete(reservation);
     }
 
-    // [BUG FIX] @Transactional 추가 → LAZY 로딩 LazyInitializationException 방지
+    // 내 예약 단건 조회
     @Transactional
     public MyReservationResponseDto getMyReservation(Long reservationId) {
         User currentUser = getCurrentUser();
@@ -142,25 +142,15 @@ public class ReservationService {
 
         validateReservationOwner(reservation, currentUser);
 
-        List<OrderItemResponseDto> orderItems = reservation.getOrderItems().stream()
-                .map(item -> new OrderItemResponseDto(
-                        item.getProduct().getProductName(),
-                        item.getQuantity(),
-                        item.getPrice()
-                ))
+        return toMyReservationResponseDto(reservation);
+    }
+
+    // 내 전체 예약 목록 조회
+    @Transactional
+    public List<MyReservationResponseDto> getMyReservations(Long userId) {
+        return reservationRepository.findByUser_Id(userId).stream()
+                .map(this::toMyReservationResponseDto)
                 .collect(Collectors.toList());
-
-        String storeName = reservation.getOrderItems().isEmpty() ? "알 수 없음"
-                : reservation.getOrderItems().get(0).getProduct().getStore().getName();
-
-        return new MyReservationResponseDto(
-                reservation.getId(),
-                storeName,
-                reservation.getPickupTime(),
-                reservation.getStatus(),
-                orderItems,
-                reservation.getTotalAmount()
-        );
     }
 
     // 사장님 - 가게 전체 예약 조회

@@ -43,5 +43,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     where oi.product.store.id = :storeId
     and r.status = :status
 """)
+
     List<Reservation> findByStoreIdAndStatus(Long storeId, ReservationStatus status);
+
+
 }

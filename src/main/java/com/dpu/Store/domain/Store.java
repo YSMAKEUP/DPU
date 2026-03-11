@@ -31,7 +31,7 @@ public class Store {
     @Column(nullable = false)
     private double longitude;
 
-    @Column(name = "kakao_place_id", nullable = false)
+    @Column(name = "kakao_place_id", nullable = true)
     private Long kakaoPlaceId;
 
     @Column(name = "open_time", nullable = false)

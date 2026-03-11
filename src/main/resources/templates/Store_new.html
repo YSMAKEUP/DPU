@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>상품 등록</title>
+  <title>매장 등록</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -124,6 +124,12 @@
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { opacity: 0.4; }
 
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
     .divider {
       border: none;
       border-top: 1.5px solid var(--border);
@@ -184,58 +190,78 @@
       .form-container { padding: 24px 18px 20px; }
       .page-title { font-size: 1.5rem; }
       .btn-row { flex-direction: column; }
+      .two-col { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 <div class="container">
 
-  <h1 class="page-title">상품 등록</h1>
+  <h1 class="page-title">매장 등록</h1>
 
   <div class="form-container">
-    <div class="section-title">상품 정보 입력</div>
+    <div class="section-title">매장 정보 입력</div>
 
-    <form th:action="@{/products}" method="post" th:object="${product}">
-      <input type="hidden" name="storeId" th:value="${storeId}">
+    <form th:action="@{/stores/new}" method="post" th:object="${storeForm}">
 
-      <!-- 상품명 -->
+      <!-- 매장명 -->
       <div class="field-group">
-        <label for="productName" class="form-label">상품명<span class="required">*</span></label>
-        <input type="text" class="form-control" id="productName" name="productName"
-               th:field="*{productName}" required placeholder="예) 초코 케이크">
-        <div class="form-text">고객에게 보여질 상품명을 입력하세요</div>
+        <label for="name" class="form-label">매장명<span class="required">*</span></label>
+        <input type="text" class="form-control" id="name"
+               th:field="*{name}" required placeholder="예) 달콤한 베이커리">
+        <div class="form-text">고객에게 보여질 매장 이름을 입력하세요</div>
       </div>
 
-      <!-- 가격 -->
+      <!-- 주소 -->
       <div class="field-group">
-        <label for="price" class="form-label">가격 (원)<span class="required">*</span></label>
-        <input type="number" class="form-control" id="price" name="price"
-               th:field="*{price}" required min="0" step="100" placeholder="예) 15000">
-        <div class="form-text">판매 가격을 입력하세요</div>
+        <label for="address" class="form-label">주소<span class="required">*</span></label>
+        <input type="text" class="form-control" id="address"
+               th:field="*{address}" required placeholder="예) 서울시 마포구 ...">
+        <div class="form-text">매장 주소를 입력하세요</div>
       </div>
 
-      <!-- 재고 수량 -->
-      <div class="field-group">
-        <label for="stockQuantity" class="form-label">재고 수량<span class="required">*</span></label>
-        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity"
-               th:field="*{stockQuantity}" required min="0" placeholder="예) 10">
-        <div class="form-text">현재 보유 중인 재고 수량을 입력하세요</div>
+      <!-- 영업 시간 -->
+      <div class="two-col">
+        <div class="field-group">
+          <label for="openTime" class="form-label">오픈 시간<span class="required">*</span></label>
+          <input type="time" class="form-control" id="openTime"
+                 th:field="*{openTime}" required>
+        </div>
+        <div class="field-group">
+          <label for="closeTime" class="form-label">마감 시간<span class="required">*</span></label>
+          <input type="time" class="form-control" id="closeTime"
+                 th:field="*{closeTime}" required>
+        </div>
       </div>
 
-      <!-- 판매 상태 -->
+      <!-- 휴무일 -->
       <div class="field-group">
-        <label for="soldOut" class="form-label">판매 상태</label>
-        <select class="form-select" id="soldOut" name="soldOut" th:field="*{soldOut}">
-          <option value="false">판매중</option>
-          <option value="true">품절</option>
+        <label for="closedDay" class="form-label">휴무일</label>
+        <select class="form-select" id="closedDay" th:field="*{closedDay}">
+          <option value="">없음 (매일 영업)</option>
+          <option value="1">월요일</option>
+          <option value="2">화요일</option>
+          <option value="3">수요일</option>
+          <option value="4">목요일</option>
+          <option value="5">금요일</option>
+          <option value="6">토요일</option>
+          <option value="7">일요일</option>
         </select>
-        <div class="form-text">재고가 있어도 수동으로 품절 처리할 수 있습니다</div>
+        <div class="form-text">정기 휴무일을 선택하세요</div>
+      </div>
+
+      <!-- 픽업 마감 시간 -->
+      <div class="field-group">
+        <label for="pickupCutoffMinutes" class="form-label">픽업 마감 (분)<span class="required">*</span></label>
+        <input type="number" class="form-control" id="pickupCutoffMinutes"
+               th:field="*{pickupCutoffMinutes}" required min="0" step="5" placeholder="예) 30">
+        <div class="form-text">영업 마감 몇 분 전까지 픽업 예약을 받을지 입력하세요</div>
       </div>
 
       <hr class="divider">
       <div class="btn-row">
         <button type="submit" class="btn-submit">등록하기</button>
-        <a th:href="@{/stores/{id}(id=${storeId})}" class="btn-cancel">취소</a>
+        <a th:href="@{/dashboard}" class="btn-cancel">취소</a>
       </div>
     </form>
   </div>

@@ -23,6 +23,6 @@ public class AdminController {
         }
 
         model.addAttribute("loginUser", loginUser);
-        return "dashboard"; // templates/admin/dashboard.html
+        return "store_dashboard"; // templates/admin/dashboard.html
     }
 }

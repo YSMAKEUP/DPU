@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductViewController {
 
     // 상품 등록 폼 페이지
-    @GetMapping("/form")
+    @GetMapping("/product_form")
     public String productFormPage() {
         return "product/form";
     }

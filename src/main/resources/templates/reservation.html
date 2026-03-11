@@ -1,10 +1,9 @@
-<!--관리자용-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>상품 등록</title>
+  <title>픽업 예약</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -42,6 +41,13 @@
       color: var(--brown-dark);
       text-align: center;
       letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .store-name {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.95rem;
       margin-bottom: 32px;
     }
 
@@ -50,7 +56,7 @@
       border-radius: 18px;
       padding: 36px 36px 32px;
       box-shadow: 0 4px 24px rgba(80, 50, 20, 0.10);
-      max-width: 560px;
+      max-width: 600px;
       margin: 0 auto;
     }
 
@@ -76,7 +82,7 @@
 
     .required { color: var(--accent); margin-left: 2px; }
 
-    .form-control, .form-select {
+    .form-control {
       width: 100%;
       background: var(--input-bg);
       border: 1.5px solid var(--border);
@@ -87,30 +93,113 @@
       color: var(--text-main);
       transition: border-color 0.2s, box-shadow 0.2s;
       outline: none;
-      appearance: none;
     }
 
-    .form-control::placeholder { color: #c0b0a0; }
-
-    .form-control:focus, .form-select:focus {
+    .form-control:focus {
       border-color: var(--brown-light);
       box-shadow: 0 0 0 3px rgba(176, 141, 114, 0.18);
       background: #fff;
     }
 
-    .form-select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237c5c44' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 38px;
-    }
-
     .form-text { font-size: 0.78rem; color: var(--text-sub); margin-top: 5px; }
 
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { opacity: 0.4; }
+    /* 상품 목록 */
+    .product-list { display: flex; flex-direction: column; gap: 12px; }
 
-    .divider { border: none; border-top: 1.5px solid var(--border); margin: 28px 0; }
+    .product-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .product-item:hover { border-color: var(--brown-light); }
+
+    .product-item.soldout {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .product-info { flex: 1; }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--brown-dark);
+    }
+
+    .product-price {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
+
+    .soldout-badge {
+      font-size: 0.72rem;
+      color: #fff;
+      background: #b0a098;
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-left: 8px;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--brown-mid);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      font-weight: 600;
+    }
+
+    .qty-btn:hover {
+      background: var(--bg);
+      border-color: var(--brown-light);
+    }
+
+    .qty-input {
+      width: 44px;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 0;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background: #fff;
+      outline: none;
+    }
+
+    /* 총 금액 */
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0 4px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--brown-dark);
+    }
+
+    .total-amount { color: var(--accent); }
+
+    .divider { border: none; border-top: 1.5px solid var(--border); margin: 24px 0; }
 
     .btn-row { display: flex; gap: 12px; margin-top: 8px; }
 
@@ -165,57 +254,128 @@
 <body>
 <div class="container">
 
-  <h1 class="page-title">상품 등록</h1>
+  <h1 class="page-title">픽업 예약</h1>
+  <p class="store-name" th:text="${storeInfo.storeName}"></p>
 
   <div class="form-container">
-    <div class="section-title">상품 정보 입력</div>
 
-    <form th:action="@{/products}" method="post" th:object="${product}">
-      <input type="hidden" name="storeId" th:value="${storeId}">
+    <!-- 픽업 시간 -->
+    <div class="section-title">픽업 시간 선택</div>
+    <div class="field-group">
+      <label class="form-label">픽업 희망 시간<span class="required">*</span></label>
+      <input type="datetime-local" class="form-control" id="pickTime" required>
+      <div class="form-text">픽업 가능 시간 내에서 선택해주세요</div>
+    </div>
 
-      <!-- 상품명 -->
-      <div class="field-group">
-        <label for="productName" class="form-label">상품명<span class="required">*</span></label>
-        <input type="text" class="form-control" id="productName" name="productName"
-               th:field="*{productName}" required placeholder="예) 초코 케이크">
-        <div class="form-text">고객에게 보여질 상품명을 입력하세요</div>
+    <hr class="divider">
+
+    <!-- 상품 선택 -->
+    <div class="section-title">상품 선택</div>
+    <div class="product-list">
+      <div th:each="product : ${storeInfo.products}"
+           th:class="${product.soldOut} ? 'product-item soldout' : 'product-item'">
+
+        <div class="product-info">
+          <div class="product-name">
+            <span th:text="${product.productName}"></span>
+            <span class="soldout-badge" th:if="${product.soldOut}">품절</span>
+          </div>
+          <div class="product-price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
+        </div>
+
+        <div class="quantity-control">
+          <button type="button" class="qty-btn" onclick="changeQty(this, -1)">−</button>
+          <input type="number" class="qty-input"
+                 th:attr="data-product-id=${product.productId}, data-price=${product.price}"
+                 value="0" min="0" readonly>
+          <button type="button" class="qty-btn" onclick="changeQty(this, 1)">+</button>
+        </div>
       </div>
+    </div>
 
-      <!-- 가격 -->
-      <div class="field-group">
-        <label for="price" class="form-label">가격 (원)<span class="required">*</span></label>
-        <input type="number" class="form-control" id="price" name="price"
-               th:field="*{price}" required min="0" step="100" placeholder="예) 15000">
-        <div class="form-text">판매 가격을 입력하세요</div>
-      </div>
+    <!-- 총 금액 -->
+    <div class="total-row">
+      <span>총 금액</span>
+      <span class="total-amount" id="totalAmount">0원</span>
+    </div>
 
-      <!-- 재고 수량 -->
-      <div class="field-group">
-        <label for="stockQuantity" class="form-label">재고 수량<span class="required">*</span></label>
-        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity"
-               th:field="*{stockQuantity}" required min="0" placeholder="예) 10">
-        <div class="form-text">현재 보유 중인 재고 수량을 입력하세요</div>
-      </div>
+    <hr class="divider">
 
-      <!-- 판매 상태 -->
-      <div class="field-group">
-        <label for="soldOut" class="form-label">판매 상태</label>
-        <select class="form-select" id="soldOut" name="soldOut" th:field="*{soldOut}">
-          <option value="false">판매중</option>
-          <option value="true">품절</option>
-        </select>
-        <div class="form-text">재고가 있어도 수동으로 품절 처리할 수 있습니다</div>
-      </div>
+    <!-- 예약하기 버튼 -->
+    <div class="btn-row">
+      <button type="button" class="btn-submit" onclick="submitReservation()">예약하기</button>
+      <a th:href="@{/stores/{id}(id=${storeId})}" class="btn-cancel">취소</a>
+    </div>
 
-      <hr class="divider">
-      <div class="btn-row">
-        <button type="submit" class="btn-submit">등록하기</button>
-        <a th:href="@{/stores/{id}(id=${storeId})}" class="btn-cancel">취소</a>
-      </div>
-    </form>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 수량 변경
+  function changeQty(btn, delta) {
+    const input = btn.parentElement.querySelector('.qty-input');
+    const current = parseInt(input.value) || 0;
+    const next = Math.max(0, current + delta);
+    input.value = next;
+    updateTotal();
+  }
+
+  // 총 금액 계산
+  function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('.qty-input').forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      const price = parseInt(input.dataset.price) || 0;
+      total += qty * price;
+    });
+    document.getElementById('totalAmount').textContent =
+      total.toLocaleString('ko-KR') + '원';
+  }
+
+  // 예약 제출 (API 호출)
+  function submitReservation() {
+    const pickTime = document.getElementById('pickTime').value;
+    if (!pickTime) {
+      alert('픽업 시간을 선택해주세요.');
+      return;
+    }
+
+    const orderItems = [];
+    document.querySelectorAll('.qty-input').forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      if (qty > 0) {
+        orderItems.push({
+          productId: parseInt(input.dataset.productId),
+          quantity: qty,
+          price: parseInt(input.dataset.price)
+        });
+      }
+    });
+
+    if (orderItems.length === 0) {
+      alert('상품을 1개 이상 선택해주세요.');
+      return;
+    }
+
+    fetch('/reservation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pickTime: pickTime + ':00',
+        orderItems: orderItems
+      })
+    })
+    .then(res => {
+      if (res.ok) {
+        alert('예약이 완료되었습니다!');
+        window.location.href = '/';
+      } else {
+        alert('예약에 실패했습니다. 다시 시도해주세요.');
+      }
+    })
+    .catch(() => alert('오류가 발생했습니다.'));
+  }
+</script>
 </body>
 </html>

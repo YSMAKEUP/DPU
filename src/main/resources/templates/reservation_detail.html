@@ -1,10 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 목록</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+          --bg: #f0ebe3;
+          --card-bg: #ffffff;
+          --brown-dark: #4a3728;
+          --brown-mid: #7c5c44;
+          --brown-light: #b08d72;
+          --accent: #c8793a;
+          --border: #e2d8cf;
+          --input-bg: #faf7f4;
+          --text-main: #2d2318;
+          --text-sub: #8a7060;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+          background-color: var(--bg);
+          background-image:
+            radial-gradient(ellipse at 20% 20%, rgba(192, 150, 100, 0.12) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 80%, rgba(120, 80, 50, 0.08) 0%, transparent 60%);
+          min-height: 100vh;
+          padding: 48px 16px;
+          font-family: 'Noto Sans KR', sans-serif;
+          color: var(--text-main);
+        }
+
+        .page-title {
+          font-family: 'Noto Serif KR', serif;
+          font-size: 1.9rem;
+          font-weight: 700;
+          color: var(--brown-dark);
+          text-align: center;
+          letter-spacing: -0.01em;
+          margin-bottom: 32px;
+        }
+
+        .list-container {
+          max-width: 680px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .reservation-card {
+          background: var(--card-bg);
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 2px 12px rgba(80, 50, 20, 0.08);
+          border: 1.5px solid var(--border);
+        }
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 16px;
+        }
+
+        .store-name {
+          font-family: 'Noto Serif KR', serif;
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: var(--brown-dark);
+        }
+
+        .pick-time {
+          font-size: 0.82rem;
+          color: var(--text-sub);
+          margin-top: 4px;
+        }
+
+        /* 상태 배지 */
+        .status-badge {
+          font-size: 0.78rem;
+          font-weight: 600;
+          padding: 4px 12px;
+          border-radius: 20px;
+          white-space: nowrap;
+        }
+        .status-PENDING   { background: #fff3e0; color: #e67e22; }
+        .status-CONFIRMED { background: #e8f5e9; color: #2e7d32; }
+        .status-CANCELLED { background: #fce4e4; color: #c0392b; }
+        .status-COMPLETED { background: #e8eaf6; color: #3949ab; }
+
+        /* 주문 상품 목록 */
+        .order-items {
+          border-top: 1.5px solid var(--border);
+          padding-top: 14px;
+          margin-top: 4px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .order-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.88rem;
+        }
+
+        .item-name { color: var(--text-main); }
+        .item-qty  { color: var(--text-sub); margin: 0 8px; }
+        .item-price { color: var(--brown-mid); font-weight: 600; }
+
+        /* 총 금액 */
+        .total-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-top: 1.5px solid var(--border);
+          margin-top: 12px;
+          padding-top: 12px;
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: var(--brown-dark);
+        }
+
+        .total-amount { color: var(--accent); }
+
+        /* 빈 상태 */
+        .empty-state {
+          text-align: center;
+          padding: 64px 0;
+          color: var(--text-sub);
+        }
+
+        .empty-state i {
+          font-size: 2.5rem;
+          margin-bottom: 16px;
+          display: block;
+          color: var(--brown-light);
+        }
+
+        @media (max-width: 600px) {
+          .page-title { font-size: 1.5rem; }
+          .reservation-card { padding: 18px; }
+        }
+    </style>
 </head>
 <body>
+<div class="container">
 
+    <h1 class="page-title">내 예약 목록</h1>
+
+    <div class="list-container">
+
+        <!-- 예약 없을 때 -->
+        <div class="empty-state" th:if="${#lists.isEmpty(reservations)}">
+            <i class="fa-regular fa-calendar-xmark"></i>
+            <p>예약 내역이 없습니다</p>
+        </div>
+
+        <!-- 예약 카드 -->
+        <div class="reservation-card" th:each="r : ${reservations}">
+
+            <div class="card-header">
+                <div>
+                    <div class="store-name" th:text="${r.storeName}"></div>
+                    <div class="pick-time">
+                        픽업 시간: <span th:text="${#temporals.format(r.pickTime, 'yyyy.MM.dd HH:mm')}"></span>
+                    </div>
+                </div>
+                <span class="status-badge"
+                      th:classappend="'status-' + ${r.status}"
+                      th:text="${r.status == T(com.dpu.Reservation.domain.ReservationStatus).PENDING   ? '대기중'  :
+                         r.status == T(com.dpu.Reservation.domain.ReservationStatus).CONFIRMED ? '확정'    :
+                         r.status == T(com.dpu.Reservation.domain.ReservationStatus).CANCELLED ? '취소됨'  : '완료'}">
+        </span>
+            </div>
+
+            <!-- 주문 상품 -->
+            <div class="order-items">
+                <div class="order-item" th:each="item : ${r.orderItems}">
+                    <span class="item-name" th:text="${item.productName}"></span>
+                    <span>
+            <span class="item-qty" th:text="'x' + ${item.quantity}"></span>
+            <span class="item-price" th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA')} + '원'"></span>
+          </span>
+                </div>
+            </div>
+
+            <!-- 총 금액 -->
+            <div class="total-row">
+                <span>총 금액</span>
+                <span class="total-amount" th:text="${#numbers.formatInteger(r.totalAmount, 0, 'COMMA')} + '원'"></span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

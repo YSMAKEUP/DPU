@@ -1,11 +1,17 @@
 package com.dpu.Reservation.domain;
 import com.dpu.Product.domain.Product;
+import com.dpu.Store.domain.Store;
 import com.dpu.User.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "reservations")
 public class Reservation {
@@ -36,6 +42,13 @@ public class Reservation {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
+
+    public Store getStore() { return store; }
 
 
     public List<OrderItem> getOrderItems(){
