@@ -20,7 +20,6 @@ public class ReservationViewController {
     // 예약 페이지
     @GetMapping
     public String reservationPage(@RequestParam Long storeId, Model model) {
-
         model.addAttribute("storeInfo", productService.getProductsByStore(storeId));
         model.addAttribute("storeId", storeId);
         return "reservation";
