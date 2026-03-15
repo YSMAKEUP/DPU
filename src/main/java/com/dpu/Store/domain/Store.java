@@ -49,6 +49,8 @@ public class Store {
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)  // ← 추가
     private List<Product> products = new ArrayList<>();
 
+
+
     // ===== getter / setter =====
 
     public Long getId() { return id; }
