@@ -9,6 +9,7 @@ import com.dpu.Reservation.domain.ReservationStatus;
 import com.dpu.Reservation.dto.*;
 import com.dpu.Reservation.repository.OrderItemRepository;
 import com.dpu.Reservation.repository.ReservationRepository;
+import com.dpu.Store.domain.Store;
 import com.dpu.Store.repository.StoreRepository;
 import com.dpu.User.domain.User;
 import com.dpu.User.repository.UserRepository;
@@ -57,6 +58,14 @@ public class ReservationService {
         reservation.setUser(user);
         reservation.setPickupTime(request.getPickTime());
         reservation.setStatus(ReservationStatus.RECEIVED);
+
+        // 첫 번째 상품에서 store 자동 추출
+        if (request.getOrderItems() != null && !request.getOrderItems().isEmpty()) {
+            Product firstProduct = productRepository.findById(
+                            request.getOrderItems().get(0).getProductId())
+                    .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+            reservation.setStore(firstProduct.getStore());
+        }
 
         Reservation saved = reservationRepository.save(reservation);
 

@@ -21,7 +21,7 @@ public class ReservationRequestDto {
     private LocalDateTime pickTime;
     private  ReservationStatus status;
     private List<OrderItemDto> orderItems; //productId ,quantity 이렇게 필요한데 어떤 자료형으로 가져와야하는지 모르겠삼
-
+    private Long storeId;
 
 
 }
