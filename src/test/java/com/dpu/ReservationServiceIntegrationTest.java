@@ -1,12 +1,9 @@
 package com.dpu;
-
 import com.dpu.Product.domain.Product;
 import com.dpu.Product.repository.ProductRepository;
-import com.dpu.Reservation.domain.ReservationStatus;
 import com.dpu.Reservation.dto.OrderItemDto;
 import com.dpu.Reservation.dto.ReservationRequestDto;
 import com.dpu.Reservation.dto.ReservationResponseDto;
-import com.dpu.Reservation.repository.ReservationRepository;
 import com.dpu.Reservation.service.ReservationService;
 import com.dpu.Store.domain.Store;
 import com.dpu.Store.repository.StoreRepository;
@@ -20,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -33,7 +28,6 @@ class ReservationServiceIntegrationTest {
 
     @Autowired private ReservationService reservationService;
     @Autowired private ProductRepository productRepository;
-    @Autowired private ReservationRepository reservationRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private StoreRepository storeRepository;
 
@@ -113,9 +107,6 @@ class ReservationServiceIntegrationTest {
 
         // when
         reservationService.deleteReservation(reservationId);
-
-
-
 
 
         // then
