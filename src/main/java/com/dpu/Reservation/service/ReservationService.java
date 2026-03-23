@@ -60,11 +60,17 @@ public class ReservationService {
         reservation.setStatus(ReservationStatus.RECEIVED);
 
         // 첫 번째 상품에서 store 자동 추출
+        // ✅ 핵심 수정: firstProduct.getStore()는 em.clear() 이후 LAZY 프록시라
+        //    TransientObjectException 발생 → storeRepository로 직접 재조회
         if (request.getOrderItems() != null && !request.getOrderItems().isEmpty()) {
             Product firstProduct = productRepository.findById(
                             request.getOrderItems().get(0).getProductId())
                     .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-            reservation.setStore(firstProduct.getStore());
+
+            Long storeId = firstProduct.getStore().getId();
+            Store store = storeRepository.findById(storeId)
+                    .orElseThrow(() -> new RuntimeException("가게를 찾을 수 없습니다."));
+            reservation.setStore(store);
         }
 
         Reservation saved = reservationRepository.save(reservation);
