@@ -41,11 +41,11 @@ class AcceptanceTest {
     @Autowired private StoreRepository storeRepository;
     @Autowired private ProductRepository productRepository;
 
-    private Long storeId;
-    private Long productId;
+    private Long storeId; //가게 아이디
+    private Long productId;//상품 아이디
 
-    // ✅ Security 필터를 실제로 타도록 authentication 객체를 공통으로 사용
-    private UsernamePasswordAuthenticationToken auth;
+
+    private UsernamePasswordAuthenticationToken auth; //로그인한 척 하기 위해서
 
     @BeforeEach
     void setUp() {
@@ -177,9 +177,9 @@ class AcceptanceTest {
     @DisplayName("인수: 예약 취소 API")
     void deleteReservation() throws Exception {
         // given - 예약 먼저 생성
-        OrderItemDto orderItem = new OrderItemDto(productId, 2, 3000);
-        ReservationRequestDto request = new ReservationRequestDto();
-        request.setPickTime(LocalDateTime.now().plusDays(1));
+        OrderItemDto orderItem = new OrderItemDto(productId, 2, 3000); // 새로운 객체로 orderItem를 생성
+        ReservationRequestDto request = new ReservationRequestDto(); // 예약 dto를 생성
+        request.setPickTime(LocalDateTime.now().plusDays(1)); //
         request.setOrderItems(List.of(orderItem));
 
         String response = mockMvc.perform(post("/reservation")
