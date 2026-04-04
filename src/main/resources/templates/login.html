@@ -204,8 +204,12 @@
             <label class="form-label" for="email">이메일</label>
             <input type="email" id="email" name="email" class="form-input"
                    placeholder="example@email.com" required>
-        </div>
 
+        </div>
+        <!-- 에러 메시지 -->
+        <div class="error-message" th:if="${param.error}">
+            존재하지 않는 이메일이거나 비밀번호가 틀렸습니다.
+        </div>
         <div class="form-group">
             <label class="form-label" for="password">비밀번호</label>
             <input type="password" id="password" name="password" class="form-input"

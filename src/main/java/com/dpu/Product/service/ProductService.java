@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class ProductService {
-
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
+    private final StockAlertService stockAlertService;
 
 
     // 가게별 상품 목록 조회 (DTO 반환)
@@ -106,6 +106,11 @@ public class ProductService {
         if (product.getQuantity() == 0) {
             product.setSoldOut(true);
         }
+
+        if (product.getQuantity() <= 5) {
+            stockAlertService.sendLowStockAlert(product.getName(), product.getQuantity());
+        }
+
     }
 
     // 예약 취소 시 재고 복구
