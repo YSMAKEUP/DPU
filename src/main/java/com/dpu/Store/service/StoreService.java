@@ -10,6 +10,10 @@ import com.dpu.Store.domain.Store;
 import com.dpu.User.domain.User;
 import com.dpu.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +29,11 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository; // 추가
+    private final UserRepository userRepository;
 
-    // 가게 등록
+    // 가게 등록 - 전체 목록 캐시 무효화
     @Transactional
+    @CacheEvict(value = "allStores", allEntries = true)
     public Long createStore(StoreCreateRequestDto requestDto, Long ownerId) {
         if (storeRepository.existsByName(requestDto.getName())) {
             throw new IllegalArgumentException("이미 존재하는 가게 이름입니다.");
@@ -38,7 +43,7 @@ public class StoreService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         Store store = new Store();
-        store.setUser(owner); // owner 설정 추가!
+        store.setUser(owner);
         store.setName(requestDto.getName());
         store.setAddress(requestDto.getAddress());
         store.setLongitude(requestDto.getLongitude());
@@ -53,9 +58,13 @@ public class StoreService {
         return store.getId();
     }
 
-    // 가게 수정
+    // 가게 수정 - 해당 가게 캐시 갱신 + 전체 목록 캐시 무효화
     @Transactional
-    public void updateStore(Long storeId, StoreCreateRequestDto requestDto) {
+    @Caching(
+            evict = @CacheEvict(value = "allStores", allEntries = true),
+            put   = @CachePut(value = "store", key = "#storeId")
+    )
+    public StoreResponseDto updateStore(Long storeId, StoreCreateRequestDto requestDto) {
         Store store = findById(storeId);
         store.setName(requestDto.getName());
         store.setAddress(requestDto.getAddress());
@@ -65,38 +74,47 @@ public class StoreService {
         store.setCloseTime(requestDto.getCloseTime());
         store.setClosedDay(requestDto.getClosedDay());
         store.setPickupCutoffMinutes(requestDto.getPickupCutoffMinutes());
+        return toResponseDto(store); // CachePut은 반환값을 캐시에 저장
     }
 
-    // 가게 삭제
+    // 가게 삭제 - 해당 가게 + 전체 목록 캐시 무효화
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "store",     key = "#storeId"),
+            @CacheEvict(value = "allStores", allEntries = true)
+    })
     public void deleteStore(Long storeId) {
         Store store = findById(storeId);
         storeRepository.delete(store);
     }
 
-    // 전체 가게 조회
+    // 전체 가게 조회 - 캐시 적용 (TTL 안에선 DB 안 감)
+    @Cacheable(value = "allStores")
     public List<StoreResponseDto> getAllStores() {
         return storeRepository.findAll().stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    // 특정 가게 이름 검색
+    // 특정 가게 이름 검색 (검색어가 key)
+    @Cacheable(value = "storeSearch", key = "#name")
     public List<StoreResponseDto> getStore(String name) {
         return storeRepository.findByNameContaining(name).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    // 가게 상세 조회
-    public Store findById(Long storeId) {
-        return storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다."));
-    }
-
+    // 가게 상세 조회 - 캐시 적용
+    @Cacheable(value = "store", key = "#storeId")
     public StoreResponseDto getStoreById(Long storeId) {
         Store store = findById(storeId);
         return toResponseDto(store);
+    }
+
+    // 내부용 엔티티 조회 (캐시 X - 트랜잭션 안에서 사용)
+    public Store findById(Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다."));
     }
 
     // 특정 가게 검증 (권한 조회)

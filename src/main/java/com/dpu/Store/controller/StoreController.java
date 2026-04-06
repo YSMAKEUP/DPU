@@ -1,5 +1,6 @@
 package com.dpu.Store.controller;
 
+import com.dpu.Store.dto.StoreCreateRequestDto;
 import com.dpu.Store.dto.StoreResponseDto;
 import com.dpu.Store.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class StoreController {
             @RequestParam double longitude,
             @RequestParam(defaultValue = "3.0") double radius) {
         List<StoreResponseDto> stores = storeService.getNearbyStores(latitude, longitude, radius);
-        return ResponseEntity.ok(stores); // ✅ storeService 연동
+        return ResponseEntity.ok(stores);
     }
 
     // 가게 이름으로 검색
@@ -35,8 +36,17 @@ public class StoreController {
     // 특정 가게 조회
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreResponseDto> getStoreDetail(@PathVariable Long storeId) {
-        StoreResponseDto store = storeService.getStoreById(storeId); // ✅ storeService 연동
+        StoreResponseDto store = storeService.getStoreById(storeId);
         return ResponseEntity.ok(store);
+    }
+
+    // 가게 수정 ← 추가! (void → StoreResponseDto 반환)
+    @PutMapping("/{storeId}")
+    public ResponseEntity<StoreResponseDto> updateStore(
+            @PathVariable Long storeId,
+            @RequestBody StoreCreateRequestDto requestDto) {
+        StoreResponseDto updated = storeService.updateStore(storeId, requestDto);
+        return ResponseEntity.ok(updated);
     }
 
     // 가게 영업 여부 확인
