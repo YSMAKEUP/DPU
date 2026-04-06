@@ -27,15 +27,19 @@ public interface StoreRepository extends JpaRepository<Store,Long> {
         // 5) 가게 이름 존재 여부 (등록/수정 시 중복 체크)
         boolean existsByName(String name);
 
-        // 거리 기반 검색 (Haversine 공식 사용)
+        // 거리 기반 검색 (Haversine 공식 사용 + 인덱스 최적화)
         @Query(value = "SELECT * FROM stores WHERE " +
-                "(6371 * acos(cos(radians(:latitude)) * cos(radians(latitude)) * " +
+                "latitude BETWEEN :latitude - :latRange AND :latitude + :latRange " +
+                "AND longitude BETWEEN :longitude - :lngRange AND :longitude + :lngRange " +
+                "AND (6371 * acos(cos(radians(:latitude)) * cos(radians(latitude)) * " +
                 "cos(radians(longitude) - radians(:longitude)) + " +
                 "sin(radians(:latitude)) * sin(radians(latitude)))) < :radius",
                 nativeQuery = true)
         List<Store> findNearbyStores(@Param("latitude") double latitude,
                                      @Param("longitude") double longitude,
-                                     @Param("radius") double radius);
+                                     @Param("radius") double radius,
+                                     @Param("latRange") double latRange,
+                                     @Param("lngRange") double lngRange);
 
 
 }

@@ -107,7 +107,10 @@ public class StoreService {
 
     // 주변 가게 조회
     public List<StoreResponseDto> getNearbyStores(double latitude, double longitude, double radius) {
-        return storeRepository.findNearbyStores(latitude, longitude, radius).stream()
+        double latRange = radius / 111.0;
+        double lngRange = radius / (111.0 * Math.cos(Math.toRadians(latitude)));
+
+        return storeRepository.findNearbyStores(latitude, longitude, radius, latRange, lngRange).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
