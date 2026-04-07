@@ -1,7 +1,8 @@
 package com.dpu.Store.controller;
 
+import com.dpu.Store.domain.Store;
 import com.dpu.Store.dto.StoreCreateRequestDto;
-import com.dpu.Store.dto.StoreResponseDto;
+import com.dpu.Store.repository.StoreRepository;
 import com.dpu.Store.service.StoreService;
 import com.dpu.User.domain.Role;
 import com.dpu.User.dto.LoginResponseDto;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class StoreViewController {
 
     private final StoreService storeService;
+    private final StoreRepository storeRepository;
 
     // 가게 목록
     @GetMapping("/list")
@@ -27,7 +29,7 @@ public class StoreViewController {
         return "list";
     }
 
-    // 매장 등록 폼 (반드시 /{storeId} 보다 위에!)
+    // 매장 등록 폼
     @GetMapping("/new")
     public String storeForm(HttpSession session, Model model) {
         LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
@@ -58,10 +60,13 @@ public class StoreViewController {
     // 해당 가게 상품 목록
     @GetMapping("/{storeId}/products")
     public String storeProducts(@PathVariable Long storeId, Model model) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("매장 없음"));
+        model.addAttribute("store", store);
+        model.addAttribute("products", store.getProducts());
         model.addAttribute("storeId", storeId);
-        return "store/products";
+        return "products";
     }
-
     // 지도로 주변 가게 찾기
     @GetMapping("/map")
     public String storeMap(Model model) {
