@@ -195,11 +195,11 @@
     <div class="section-box">
         <div class="section-title">상품 목록</div>
 
-        <div class="empty-state" th:if="${#lists.isEmpty(store.products)}">
+        <div class="empty-state" th:if="${store.products.size() == 0}">
             등록된 상품이 없습니다
         </div>
 
-        <table th:if="${!#lists.isEmpty(store.products)}">
+        <table th:if="${store.products.size() > 0}">
             <thead>
             <tr>
                 <th>상품명</th>
