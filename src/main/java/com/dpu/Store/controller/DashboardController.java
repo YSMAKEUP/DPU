@@ -31,6 +31,6 @@ public class DashboardController {
 
         model.addAttribute("store", stores.get(0));
         model.addAttribute("loginUser", loginUser);
-        return "dashboard";
+        return "store_dashboard";
     }
 }
