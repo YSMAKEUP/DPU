@@ -32,7 +32,7 @@ public class ProductController {
 
         model.addAttribute("product", new ProductRequestDto());
         model.addAttribute("storeId", store.getId());
-        return "Store_new";
+        return "product_form";
     }
 
     // 상품 등록 처리
