@@ -301,11 +301,11 @@
         <span th:if="${product.soldOut}" class="product-stock stock-out">
           <i class="fas fa-times-circle"></i> 품절
         </span>
-        <span th:if="${!product.soldOut and product.stockQty <= 10 and product.stockQty > 0}"
+        <span th:if="${!product.soldOut and product.stockQuantity <= 10 and product.stockQuantity > 0}"
               class="product-stock stock-low">
-          <i class="fas fa-exclamation-triangle"></i> 품절임박 (<span th:text="${product.stockQty}"></span>개)
+          <i class="fas fa-exclamation-triangle"></i> 품절임박 (<span th:text="${product.stockQuantity}"></span>개)
         </span>
-        <span th:if="${!product.soldOut and product.stockQty > 10}"
+        <span th:if="${!product.soldOut and product.stockQuantity > 10}"
               class="product-stock stock-ok">
           <i class="fas fa-check-circle"></i> 재고 충분
         </span>
