@@ -58,7 +58,7 @@ public class ProductController {
 
         ProductDto product = productService.findProductDto(id);
         model.addAttribute("product", product);
-        return "edit";
+        return "product_edit";
     }
 
     // [BUG FIX] 상품 수정 처리 - storeId를 클라이언트에서 받지 않고 세션 기반으로 검증
