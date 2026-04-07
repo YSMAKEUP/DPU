@@ -1,6 +1,7 @@
 package com.dpu.Store.repository;
 
 import com.dpu.Store.domain.Store;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public interface StoreRepository extends JpaRepository<Store,Long> {
 
         // 1) 사장(OWNER)의 내 가게 목록
+        @EntityGraph(attributePaths = {"products"})
         List<Store> findByOwner_Id(Long ownerId);
 
         // 2) 특정 사장의 특정 가게 조회 (권한 검증용)
@@ -40,6 +42,4 @@ public interface StoreRepository extends JpaRepository<Store,Long> {
                                      @Param("radius") double radius,
                                      @Param("latRange") double latRange,
                                      @Param("lngRange") double lngRange);
-
-
 }
