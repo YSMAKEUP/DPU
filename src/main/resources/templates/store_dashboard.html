@@ -44,7 +44,6 @@
             margin: 0 auto;
         }
 
-        /* 메뉴 카드 */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -83,7 +82,6 @@
             font-weight: 600;
         }
 
-        /* 상품 목록 */
         .section-box {
             background: var(--card-bg);
             border-radius: 18px;
@@ -163,6 +161,21 @@
             font-size: 0.9rem;
         }
 
+        .home-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .home-link a {
+            color: var(--brown-mid);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .home-link a:hover {
+            color: var(--brown-dark);
+        }
+
         @media (max-width: 600px) {
             .menu-grid { grid-template-columns: repeat(2, 1fr); }
             .page-title { font-size: 1.5rem; }
@@ -224,6 +237,11 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- 홈으로 -->
+    <div class="home-link">
+        <a href="/">← 홈으로 돌아가기</a>
     </div>
 
 </div>
