@@ -29,6 +29,10 @@ public interface StoreRepository extends JpaRepository<Store,Long> {
         // 5) 가게 이름 존재 여부 (등록/수정 시 중복 체크)
         boolean existsByName(String name);
 
+        // products 함께 조회
+        @EntityGraph(attributePaths = {"products"})
+        Optional<Store> findById(Long id);
+
         // 거리 기반 검색 (Haversine 공식 사용 + 인덱스 최적화)
         @Query(value = "SELECT * FROM stores WHERE " +
                 "latitude BETWEEN :latitude - :latRange AND :latitude + :latRange " +
