@@ -94,7 +94,7 @@ public class ProductService {
     // 예약 생성 시 재고 감소
     @Transactional
     public void decreaseStock(Long productId, int count) {
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findByIdWithLock(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다."));
 
         if (product.getQuantity() < count) {

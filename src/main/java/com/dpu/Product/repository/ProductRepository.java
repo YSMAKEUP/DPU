@@ -6,16 +6,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface ProductRepository extends JpaRepository <Product,Long> {
-    //디저트가 재고가 있는지 조회, 특정 디저트 재고 조회,디저트 상태 (품절), 메뉴 목록
-    // 가게의 재고가 있는지 조회
-    // 메뉴 목록 (매장별)
-
-//    Long findById(Long id);
 
     List<Product> findByStoreId(Long storeId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Product p WHERE p.id = :id")
+    Optional<Product> findByIdWithLock(@Param("id") Long id);
 
     // 판매중 메뉴 목록 (품절 제외)
     List<Product> findByStoreIdAndSoldOutFalse(Long storeId);
