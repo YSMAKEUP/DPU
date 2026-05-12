@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Propagation;
 
 @Service
 @Transactional
@@ -92,7 +93,7 @@ public class ProductService {
     }
 
     // 예약 생성 시 재고 감소
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void decreaseStock(Long productId, int count) {
         Product product = productRepository.findByIdWithLock(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다."));
